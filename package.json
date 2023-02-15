@@ -1,5 +1,5 @@
 {
-  "name": "my-nuxt-layer",
+  "name": "@limbo-works/limbo-nuxt-search",
   "type": "module",
   "version": "0.0.2",
   "main": "./nuxt.config.js",
