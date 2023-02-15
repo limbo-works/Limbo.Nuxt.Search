@@ -8,7 +8,8 @@
     "build": "nuxi build .playground",
     "generate": "nuxi generate .playground",
     "preview": "nuxi preview .playground",
-    "lint": "eslint ."
+    "lint": "eslint .",
+	"test": "exit 0"
   },
   "devDependencies": {
     "eslint": "^8.28.0",
