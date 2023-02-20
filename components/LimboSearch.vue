@@ -108,7 +108,6 @@ export default {
 	},
 	data() {
 		return {
-			//axios: this.$fetch.create,
 			lastRequestedUrl: null,
 			searchData: JSON.parse(JSON.stringify(defaultSearchData)),
 			internalSearchFilters: this.removeReservedParameters(
@@ -284,21 +283,11 @@ export default {
 			handler(val) {
 				if (this.compConfig.updateSearchFiltersOnBindingChange) {
 					this.internalSearchFilters = this.removeReservedParameters(val);
-					// this.$set(
-					// 	this,
-					// 	'internalSearchFilters',
-					// 	this.removeReservedParameters(val)
-					// );
+
 					this.searchFiltersClone = this.removeReservedParameters(
 						JSON.parse(JSON.stringify(val))
 					);
-					// this.$set(
-					// 	this,
-					// 	'searchFiltersClone',
-					// 	this.removeReservedParameters(
-					// 		JSON.parse(JSON.stringify(val))
-					// 	)
-					// );
+
 				}
 			},
 		},
@@ -340,39 +329,23 @@ export default {
 						const value = this.internalPagination[key];
 						if (value.limit) {
 							value.limit = +value.limit
-							//this.$set(value, 'limit', +value.limit);
 						}
 						if (value.offset) {
 							value.limit = +value.limit + +value.offset
-							// this.$set(
-							// 	value,
-							// 	'limit',
-							// 	+value.limit + +value.offset
-							// );
+
 							value.offset = 0
-							//this.$set(value, 'offset', 0);
 						}
 					}
 				} else {
 					// Ordinary pagination
 					if (this.internalPagination.limit) {
 						this.internalPagination.limit = +this.internalPagination.limit;
-						// this.$set(
-						// 	this.internalPagination,
-						// 	'limit',
-						// 	+this.internalPagination.limit
-						// );
+
 					}
 					if (this.internalPagination.offset) {
 						this.internalPagination.limit = +this.internalPagination.limit + +this.internalPagination.offset;
-						// this.$set(
-						// 	this.internalPagination,
-						// 	'limit',
-						// 	+this.internalPagination.limit +
-						// 		+this.internalPagination.offset
-						// );
+
 						this.internalPagination.offset = 0;
-						// this.$set(this.internalPagination, 'offset', 0);
 					}
 				}
 			}
@@ -409,11 +382,6 @@ export default {
 			if (!this.searchData?.error && this.state.hasMoreItems?.[id]) {
 				// Make sure that we don't fetch the other groups as well
 				this.internalExtraParameters[this.compConfig.groupParameter] = id;
-				// this.$set(
-				// 	this.internalExtraParameters,
-				// 	this.compConfig.groupParameter,
-				// 	id
-				// );
 				// Get the amount if none is set
 				if (typeof amount === 'undefined') {
 					amount =
@@ -428,7 +396,6 @@ export default {
 					+this.searchData?.pagination?.[id]?.limit;
 				internal.limit = +amount;
 				this.internalPagination[id] = internal;
-				//this.$set(this.internalPagination, id, internal);
 				this.requestSearch({ append: true });
 			}
 		},
@@ -447,11 +414,7 @@ export default {
 			if (!this.searchData?.error && this.state.hasMoreItems?.[id]) {
 				// Make sure that we don't fetch the other groups as well
 				this.internalExtraParameters[this.compConfig.groupParameter] = id;
-				// this.$set(
-				// 	this.internalExtraParameters,
-				// 	this.compConfig.groupParameter,
-				// 	id
-				// );
+
 				// Fetch
 				const internal = this.internalPagination[id] || {};
 				internal.offset =
@@ -460,7 +423,6 @@ export default {
 				internal.limit =
 					+this.searchData?.pagination?.[id]?.total - internal.offset;
 				this.internalPagination[id] = internal;
-				//this.$set(this.internalPagination, id, internal);
 				this.requestSearch({ append: true });
 			}
 		},
@@ -505,7 +467,6 @@ export default {
 						/* if (this.lastRequestedUrl != response.config.url) {
 							return;
 						} */
-						console.log('response', response);
 						if (!this.requestTimeout) {
 							this.state.hasFetchedOnce = true;
 							response =
@@ -549,7 +510,6 @@ export default {
 										)
 								  ) ?? newData
 								: newData;
-							console.log('newData', response.data);
 							this.searchData.facets = response.data?.facets;
 							this.searchData.misc = response.data?.misc;
 							this.searchData.meta = response.data?.meta;
@@ -570,15 +530,7 @@ export default {
 											offset: group.offset || 0,
 											total: group.total || 0,
 										};
-										// this.$set(
-										// 	this.searchData.pagination,
-										// 	group.id,
-										// 	{
-										// 		limit: group.limit || 0,
-										// 		offset: group.offset || 0,
-										// 		total: group.total || 0,
-										// 	}
-										// );
+
 									}
 								});
 
@@ -589,24 +541,12 @@ export default {
 									);
 									this.searchData.pagination[key] = value;
 
-									/* this.$set(
-										this.searchData.pagination,
-										key,
-										value
-									); */
 									this.internalPagination[key] = {
 										...value,
 									};
-									// this.$set(this.internalPagination, key, {
-									// 	...value,
-									// });
 
 									this.state.hasMoreItems[key] = value.limit + value.offset < value.total;
-									// this.$set(
-									// 	this.state.hasMoreItems,
-									// 	key,
-									// 	value.limit + value.offset < value.total
-									// );
+
 								}
 							} else {
 								// Ordinary pagination
@@ -615,17 +555,9 @@ export default {
 									response.data?.pagination
 								);
 								this.internalPagination.limit = this.searchData.pagination.limit;
-								// this.$set(
-								// 	this.internalPagination,
-								// 	'limit',
-								// 	this.searchData.pagination.limit
-								// );
+
 								this.internalPagination.offset = this.searchData.pagination.offset;
-								// this.$set(
-								// 	this.internalPagination,
-								// 	'offset',
-								// 	this.searchData.pagination.offset
-								// );
+
 								this.state.hasMoreItems =
 									this.searchData.pagination.limit +
 										this.searchData.pagination.offset <
@@ -633,7 +565,6 @@ export default {
 							}
 							this.state.isLoading = false;
 							this.searchData = this.searchData;
-							//this.$set(this, 'searchData', this.searchData);
 							this.$emit(
 								'update',
 								JSON.parse(JSON.stringify(this.bindings))
@@ -666,7 +597,6 @@ export default {
 							this.searchData.error = error.response;
 							this.state.isLoading = false;
 							this.searchData = this.searchData
-							//this.$set(this, 'searchData', this.searchData);
 							this.$emit(
 								'update',
 								JSON.parse(JSON.stringify(this.bindings))
@@ -703,7 +633,6 @@ export default {
 				const value = query[key];
 				// Set key as pagination
 				if (this.compConfig.enableGroupedSearch) {
-					console.log('enableGroupedSearch', key);
 					const array = key.toLowerCase().split('');
 					const firstLetter = array.shift();
 					const remainder = array.join('');
@@ -717,44 +646,25 @@ export default {
 						);
 						if (firstLetter === 'o') {
 							object.offset = parseInt(value);
-							//this.$set(object, 'offset', parseInt(value));
 						}
 						if (firstLetter === 'l') {
 							object.limit = parseInt(value);
-							//this.$set(object, 'limit', parseInt(value));
 						}
 						this.internalPagination = Object.assign(this.internalPagination, {
 							[remainder]: object,
 						});
-						// this.$set(
-						// 	this,
-						// 	'internalPagination',
-						// 	Object.assign(this.internalPagination, {
-						// 		[remainder]: object,
-						// 	})
-						// );
 						continue;
 					}
 				} else {
-					console.log('key', key);
 					if (key.toLowerCase() === 'limit') {
 						if (!this.internalPagination) {
 							this.internalPagination = {
 								limit: parseInt(value),
 								offset: 0,
 							};
-							// this.$set(this, 'internalPagination', {
-							// 	limit: parseInt(value),
-							// 	offset: 0,
-							// });
 							continue;
 						}
 						this.internalPagination.limit = parseInt(value);
-						// this.$set(
-						// 	this.internalPagination,
-						// 	'limit',
-						// 	parseInt(value)
-						// );
 						continue;
 					} else if (key.toLowerCase() === 'offset') {
 						if (!this.internalPagination) {
@@ -762,18 +672,9 @@ export default {
 								limit: 0,
 								offset: parseInt(value),
 							};
-							// this.$set(this, 'internalPagination', {
-							// 	limit: 0,
-							// 	offset: parseInt(value),
-							// });
 							continue;
 						}
 						this.internalPagination.offset = parseInt(value)
-						// this.$set(
-						// 	this.internalPagination,
-						// 	'offset',
-						// 	parseInt(value)
-						// );
 						continue;
 					}
 				}
@@ -781,7 +682,6 @@ export default {
 				if (!this.setSearchFilterField(key, value)) {
 					// Set key as extra parameter
 					this.internalExtraParameters[key] = value;
-					//this.$set(this.internalExtraParameters, key, value);
 				}
 			}
 		},
@@ -796,12 +696,10 @@ export default {
 					if (field.value.find((item) => item.value === value)) {
 						field.value.forEach((item) => {
 							item.checked = item.value === value;
-							//this.$set(item, 'checked', item.value === value);
 						});
 					}
 				} else {
 					field.value = value
-					//this.$set(field, 'value', value);
 				}
 				return true;
 			}
