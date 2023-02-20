@@ -499,7 +499,7 @@ export default {
 							this.searchData.error = null;
 
 							const newData = this.compConfig.enableGroupedSearch
-								? response.data?.data
+								? response
 								: response.data;
 
 							this.searchData.data = append // Data is getting merged
@@ -510,20 +510,20 @@ export default {
 										)
 								  ) ?? newData
 								: newData;
-							this.searchData.facets = response.data?.facets;
-							this.searchData.misc = response.data?.misc;
-							this.searchData.meta = response.data?.meta;
+							this.searchData.facets = response.facets;
+							this.searchData.misc = response.misc;
+							this.searchData.meta = response.meta;
 							this.query.parameters = { ...this.parameters };
 							if (this.compConfig.enableGroupedSearch) {
 								// Group pagination
 								this.state.hasMoreItems = {};
 								this.searchData.pagination =
-									response?.data?.pagination;
+									response?.pagination;
 
 								if (!this.searchData.pagination) {
 									this.searchData.pagination = {};
 								}
-								response?.data?.groups?.forEach((group) => {
+								response?.groups?.forEach((group) => {
 									if ('id' in group) {
 										this.searchData.pagination[group.id] = {
 											limit: group.limit || 0,
@@ -552,7 +552,7 @@ export default {
 								// Ordinary pagination
 								this.searchData.pagination = Object.assign(
 									{ limit: 0, offset: 0, total: 0 },
-									response.data?.pagination
+									response.pagination
 								);
 								this.internalPagination.limit = this.searchData.pagination.limit;
 
