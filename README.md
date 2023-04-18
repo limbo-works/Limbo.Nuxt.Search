@@ -8,7 +8,7 @@ Vue wrapper component for handling the searching actions on list/search pages. H
 ## Installation
 
 ```bash
-To be figured out, so far just "copy paste"
+yarn add @limbo-works/limbo-nuxt-search
 ```
 
 ## Using the wrapper component
