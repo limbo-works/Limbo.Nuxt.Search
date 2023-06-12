@@ -70,8 +70,8 @@ const defaultSearchData = {
 	data: null,
 	facets: null,
 	pagination: null,
-	misc: null,
 	meta: null,
+	misc: null,
 	error: null,
 };
 const reservedParameters = ['limit', 'offset', 'total'];
@@ -233,7 +233,7 @@ export default {
 			for (const name in parameters) {
 				const value = parameters[name];
 				if (
-					!value &&
+					value == null &&
 					!this.compConfig.persistentParameters?.includes?.(name)
 				) {
 					delete parameters[name];
@@ -287,7 +287,6 @@ export default {
 					this.searchFiltersClone = this.removeReservedParameters(
 						JSON.parse(JSON.stringify(val))
 					);
-
 				}
 			},
 		},
@@ -460,13 +459,15 @@ export default {
 				this.lastRequestedUrl = `${this.endpointUrl}?${serializedParams}`;
 				this.state.isAppend = !!append;
 				this.$emit('update', JSON.parse(JSON.stringify(this.bindings)));
+
+        const currentlyRequestedUrl = this.lastRequestedUrl;
 				$fetch(this.lastRequestedUrl)
 					.then((response) => {
-
 						// eslint-disable-next-line
-						/* if (this.lastRequestedUrl != response.config.url) {
+            if (this.lastRequestedUrl != currentlyRequestedUrl) {
 							return;
-						} */
+						}
+
 						if (!this.requestTimeout) {
 							this.state.hasFetchedOnce = true;
 							response =
@@ -478,15 +479,15 @@ export default {
 							if (
 								append &&
 								this.searchData.pagination &&
-								response?.data
+								response
 							) {
-								if (response.data.pagination) {
-									response.data.pagination = {
+								if (response.pagination) {
+									response.pagination = {
 										...this.searchData.pagination,
-										...response.data?.pagination,
+										...response.pagination,
 									};
 								} else {
-									response.data.pagination = {
+									response.pagination = {
 										...this.searchData.pagination,
 									};
 								}
@@ -500,8 +501,7 @@ export default {
 
 							const newData = this.compConfig.enableGroupedSearch
 								? response
-								: response.data;
-
+								: response?.data;
 							this.searchData.data = append // Data is getting merged
 								? this.compConfig.dataMergerMethod?.(
 										newData,
@@ -510,9 +510,10 @@ export default {
 										)
 								  ) ?? newData
 								: newData;
-							this.searchData.facets = response.facets;
-							this.searchData.misc = response.misc;
-							this.searchData.meta = response.meta;
+
+							this.searchData.facets = response?.facets;
+							this.searchData.meta = response?.meta;
+							this.searchData.misc = response?.misc;
 							this.query.parameters = { ...this.parameters };
 							if (this.compConfig.enableGroupedSearch) {
 								// Group pagination
@@ -552,7 +553,7 @@ export default {
 								// Ordinary pagination
 								this.searchData.pagination = Object.assign(
 									{ limit: 0, offset: 0, total: 0 },
-									response.pagination
+									response?.pagination
 								);
 								this.internalPagination.limit = this.searchData.pagination.limit;
 
@@ -620,8 +621,13 @@ export default {
 					if ((item && item.value) || isPersistent) {
 						array.push(`${key}=${item?.value}`);
 					}
-				} else if (value || isPersistent) {
-					array.push(`${key}=${value}`);
+				} else if (
+					value ||
+					/* eslint-disable-next-line eqeqeq */
+					value != this.compConfig.defaultParameterValues?.[key] ||
+					isPersistent
+				) {
+					array.push(`${key}=${value ?? ''}`);
 				}
 			}
 			return array.join('&');
@@ -678,6 +684,7 @@ export default {
 						continue;
 					}
 				}
+
 				// Set key as search filter field
 				if (!this.setSearchFilterField(key, value)) {
 					// Set key as extra parameter
@@ -699,7 +706,7 @@ export default {
 						});
 					}
 				} else {
-					field.value = value
+					field.value = value ?? '';
 				}
 				return true;
 			}
@@ -775,11 +782,11 @@ export default {
 
 				if (
 					key in defaultParameterValues &&
-					String(defaultParameterValues[key]) === value
+					String(defaultParameterValues[key]) === (value ?? '')
 				) {
 					return false;
 				}
-				return !this.compConfig.hiddenParameters.includes(key);
+				return !this.compConfig.hiddenParameters?.includes?.(key);
 			});
 			const url =
 				[window.location.pathname, array.join('&')]
