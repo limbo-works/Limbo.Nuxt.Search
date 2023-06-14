@@ -48,12 +48,13 @@ const defaultGroupedDataMergerMethod = (newData, oldData) => {
 const defaultLimit = 12;
 const defaultConfig = {
 	enableLiveSearch: false, // { boolean|array } Can be an array of particular parameters triggering a live search or simply true or false
-	immediateSearch: { useUrlQuery: true }, // { boolean|object } Can also be set to boolean value
+	immediateSearch: { useUrlQuery: true, /* ssr: true - not fully developed yet, dont use! */ }, // { boolean|object } Can also be set to boolean value
+  clearRouterHashOnSearch: false, // { boolean|object } Whether to clear the hash on search. If an object is used, the property "includeInitialSearch" to also clear for the first search, else that will be left out
 	limit: { initial: defaultLimit, value: defaultLimit }, // { number|object } If a numeric limit is set, it will be used for both values - grouped paginations should be set with their ids (fx. limit: { 1: { initial: 18, value: 12 }, 2: { initial: 15, value: 6 } }).
 	enableGroupedSearch: false, // { boolean } Make use of grouped pagination (l1, o1, l2, o2, (ie. l{id}, o{id}) etc.) instead of simply "limit" and "offset".
 	groupParameter: 'groups', // { string } When needing to "fetch more / all" we need a parameter to filter that.
 	updateUrlQueryOnSearch: true, // { boolean } Allow the page's url to reflect the search
-	updateVueRouteOnSearch: false, // { boolean } Allow the vue router to reflect the search - may cause issues if the page is keyed based off the query
+	updateVueRouteOnSearch: false, // { boolean|object } Allow the vue router to reflect the search - may cause issues if the page is keyed based off the query. /* NOT FULLY DONE YET (DON'T CURRENTLY RE-SEARCH): If an object is used, set "pushHistory" to make each individual search part of the browser history. */
 	clearSearchDataOnError: true, // { boolean } When toggled to false, the data from the previous search will persist on error
 	allowSearchFiltersMutation: false, // { boolean } Needs to be explicitly turned on!
 	updateSearchFiltersOnBindingChange: true, // { boolean } Whether a change in the bound search filters should trigger a change in the internally used data
@@ -77,6 +78,7 @@ const defaultSearchData = {
 const reservedParameters = ['limit', 'offset', 'total'];
 export default {
 	name: 'LimboSearch',
+
 	props: {
 		tag: {
 			type: String,
@@ -106,6 +108,7 @@ export default {
 			default: () => ({}),
 		},
 	},
+
 	data() {
 		return {
 			lastRequestedUrl: null,
@@ -132,6 +135,7 @@ export default {
 			latestResponse: null,
 		};
 	},
+
 	computed: {
 		compConfig() {
 			const _return = { ...defaultConfig, ...this.config };
@@ -270,6 +274,7 @@ export default {
 			return false;
 		},
 	},
+
 	watch: {
 		'state.isInitiated': {
 			handler(state) {
@@ -277,6 +282,7 @@ export default {
 					this.$emit('init', true);
 				}
 			},
+      immediate: true,
 		},
 		searchFilters: {
 			deep: true,
@@ -316,9 +322,10 @@ export default {
 			},
 		},
 	},
-	created() {
+
+	async created() {
 		// Make an initiary search
-		if (typeof window !== 'undefined' && this.compConfig.immediateSearch) {
+		if ((typeof window !== 'undefined' || this.compConfig.immediateSearch?.ssr) && this.compConfig.immediateSearch) {
 			this.resetPagination();
 			if (this.compConfig.immediateSearch?.useUrlQuery) {
 				this.mixParametersFromUrl();
@@ -348,14 +355,15 @@ export default {
 					}
 				}
 			}
-			this.requestSearch({ delay: 0 });
+			await this.requestSearch({ delay: 0 });
 		}
 		// Check if initiated
-		if (typeof window !== 'undefined' && !this.compConfig.immediateSearch) {
+		if (!this.compConfig.immediateSearch) {
 			this.state.isInitiated = true;
 			this.resetPagination();
 		}
 	},
+
 	methods: {
 		// Methods to call from the outside
 		submit() {
@@ -426,16 +434,30 @@ export default {
 			}
 		},
 		// Where the magic happens
-		requestSearch(options) {
+		async requestSearch(options) {
 			const { delay, append } = {
 				delay: this.compConfig.searchDelay,
 				append: false,
 				...options,
 			};
+
+      let clearHash = false;
+      if (
+        !append && this.$route.hash &&
+        this.compConfig.clearRouterHashOnSearch && (
+          !this.compConfig.immediateSearch ||
+          this.state.hasFetchedOnce ||
+          this.compConfig.clearRouterHashOnSearch?.includeInitialSearch
+        )
+      ) {
+        clearHash = true;
+      }
+
 			this.state.isInitiated = true;
 			this.state.isLoading = true;
-			window.clearTimeout(this.requestTimeout);
-			this.requestTimeout = window.setTimeout(() => {
+
+      // The search requesting
+      const searchRequest = async () => {
 				const params = {
 					...(append
 						? {
@@ -452,7 +474,7 @@ export default {
 					this.compConfig.updateUrlQueryOnSearch ||
 					this.compConfig.updateVueRouteOnSearch
 				) {
-					this.setUrlQuery(serializedParams);
+					this.setUrlQuery(serializedParams, clearHash);
 				}
 
 				this.requestTimeout = null;
@@ -461,7 +483,7 @@ export default {
 				this.$emit('update', JSON.parse(JSON.stringify(this.bindings)));
 
         const currentlyRequestedUrl = this.lastRequestedUrl;
-				$fetch(this.lastRequestedUrl)
+				await $fetch(this.lastRequestedUrl)
 					.then((response) => {
 						// eslint-disable-next-line
             if (this.lastRequestedUrl != currentlyRequestedUrl) {
@@ -605,7 +627,16 @@ export default {
 							this.$emit('error', error.response);
 						}
 					});
-			}, delay);
+			}
+
+      // Run on client or server
+      if (typeof window !== 'undefined' && delay > 0) {
+        await new Promise((resolve) => {
+          window.clearTimeout(this.requestTimeout);
+          this.requestTimeout = window.setTimeout(resolve, delay);
+        });
+      }
+      await searchRequest();
 		},
 		// Serialization of parameters
 		getSerializedParams(parameters = this.parameters) {
@@ -624,7 +655,7 @@ export default {
 				} else if (
 					value ||
 					/* eslint-disable-next-line eqeqeq */
-					value != this.compConfig.defaultParameterValues?.[key] ||
+					(key in (this.compConfig.defaultParameterValues || {}) && value != this.compConfig.defaultParameterValues?.[key]) ||
 					isPersistent
 				) {
 					array.push(`${key}=${value ?? ''}`);
@@ -744,7 +775,7 @@ export default {
 			}
 		},
 		// Update the url query
-		setUrlQuery(query = this.getSerializedParams()) {
+		setUrlQuery(query = this.getSerializedParams(), clearHash = false) {
 			const array = query.split('&').filter((item) => {
 				const key = item.split('=').shift();
 				const value = item.split('=').pop();
@@ -789,18 +820,18 @@ export default {
 				return !this.compConfig.hiddenParameters?.includes?.(key);
 			});
 			const url =
-				[window.location.pathname, array.join('&')]
+        [this.$route.path, array.join('&')]
 					.filter(Boolean)
-					.join('?') + window.location.hash;
+					.join('?') + (clearHash ? '' : (typeof window !== 'undefined' ? window.location.hash : this.$route.hash));
 
-			const oldUrl = [
+			const oldUrl = typeof window === 'undefined' ? this.$route.fullPath : [
 				window.location.pathname,
 				window.location.search,
 				window.location.hash,
 			]
 				.filter(Boolean)
 				.join('');
-			this.compConfig.updateUrlQueryOnSearch &&
+      typeof window !== 'undefined' && this.compConfig.updateUrlQueryOnSearch &&
 				window.history.replaceState(null, '', url);
 
 			if (
@@ -808,11 +839,14 @@ export default {
 				decodeURIComponent(this.$route.fullPath) !==
 					decodeURIComponent(url)
 			) {
-				this.$router.replace(url);
+        this.compConfig.updateVueRouteOnSearch?.pushHistory
+          ? this.$router.push(url)
+          : this.$router.replace(url);
 			}
 
 			// Edge case, but might as well handle it
 			if (
+        typeof window !== 'undefined' &&
 				this.compConfig.updateVueRouteOnSearch &&
 				this.compConfig.updateUrlQueryOnSearch
 			) {
