@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.2](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v1.1.1...v1.1.2) (2024-01-16)
+
+
+### Bug Fixes
+
+* combination v2 ([2d995d9](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/2d995d939a6ddfa5ec387835361205d6e510a239))
+* combine workflows ([297094d](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/297094dcd4558022a3a8609d9d1d0b1daf9168bb))
+* remove duplicate ([fd7889d](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/fd7889d1a43f6493e3d0a65d6bffbd31f340e313))
+
 ## [1.1.1](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v1.1.0...v1.1.1) (2024-01-16)
 
 
