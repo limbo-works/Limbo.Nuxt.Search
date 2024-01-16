@@ -15,40 +15,30 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: google-github-actions/release-please-action@v4
+              id: release
               with:
                   token: ${{ secrets.GITHUB_TOKEN }}
                   release-type: node
-
-
-
-    release-please:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: google-github-actions/release-please-action@v4
-          id: release
-          with:
-              token: ${{ secrets.GITHUB_TOKEN }}
-              release-type: node
-        # The logic below handles the package building:
-        - uses: actions/checkout@v4
-          if: ${{ steps.release.outputs.release_created }}
-        - uses: actions/setup-node@v4
-          with:
-              node-version: 18.18
-              registry-url: 'https://npm.pkg.github.com'
-          if: ${{ steps.release.outputs.release_created }}
-        - run: npm install
-          env:
-              NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-          if: ${{ steps.release.outputs.release_created }}
-        - run: npm ci
-          if: ${{ steps.release.outputs.release_created }}
-        - run: npm test
-          if: ${{ steps.release.outputs.release_created }}
-        # The logic below handles the package building:
-        - run: npm ci
-          if: ${{ steps.release.outputs.release_created }}
-        - run: npm publish
-          env:
-              NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-          if: ${{ steps.release.outputs.release_created }}
+            # The logic below handles the package building:
+            - uses: actions/checkout@v4
+              if: ${{ steps.release.outputs.release_created }}
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 18.18
+                  registry-url: 'https://npm.pkg.github.com'
+              if: ${{ steps.release.outputs.release_created }}
+            - run: npm install
+              env:
+                  NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+              if: ${{ steps.release.outputs.release_created }}
+            - run: npm ci
+              if: ${{ steps.release.outputs.release_created }}
+            - run: npm test
+              if: ${{ steps.release.outputs.release_created }}
+            # The logic below handles the package building:
+            - run: npm ci
+              if: ${{ steps.release.outputs.release_created }}
+            - run: npm publish
+              env:
+                  NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+              if: ${{ steps.release.outputs.release_created }}
