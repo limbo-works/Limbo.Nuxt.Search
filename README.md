@@ -51,7 +51,7 @@ Then you can use the LimboSearch component anywhere within that solution:
 
 | Prop | Description | Default value | Data type |
 | ---- | ----------- | ------------- | --------- |
-| tag | The element tag to use for the wrapper. | 'div' | String |
+| tag | The element tag to use for the wrapper. \`null\` will result in wrapper-less mode. | 'div' | String |
 | searchFilters | Required, an object containing the `endpointUrl (String)` and the filtering input fields `fields (Array)`. | n/a | Object |
 | extraParameters | Extra parameters to add to the search, which does not already exist in the filters. This could be a site or context id. These will be set with a low priority, meaning they may be overwritten by search filters sharing or url parameters sharing the same name. | {} | Object |
 | parameterOverwrites | This is for when you want to overwrite a parameter value, whether it be an url set parameter, a search filter or some of the set extra parameters. | {} | Object |

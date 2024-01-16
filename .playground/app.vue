@@ -1,7 +1,8 @@
 <template>
   <div>
     Hello World!
-	<LimboSearch :search-filters="{
+	<LimboSearch
+		:search-filters="{
 			endpointUrl: 'https://www.jammerbugt.dk/api/jobs/search/',
 			fields: [{name: 'contextId', value: '1588'}, {name: 'text', value: ''}, {name:'limit', value: '16'}],
 		}"

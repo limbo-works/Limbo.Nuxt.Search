@@ -1,7 +1,16 @@
 <template>
-	<Component :is="tag" class="c-limbo-search">
+	<Component
+		v-if="tag"
+		:is="tag"
+		class="c-limbo-search"
+		v-bind="$attrs"
+	>
 		<slot v-bind="bindings"></slot>
 	</Component>
+	<slot
+		v-else
+		v-bind="bindings"
+	></slot>
 </template>
 
 <script>
@@ -78,6 +87,7 @@ const defaultSearchData = {
 const reservedParameters = ['limit', 'offset', 'total'];
 export default {
 	name: 'LimboSearch',
+	inheritAttrs: false,
 
 	props: {
 		tag: {
