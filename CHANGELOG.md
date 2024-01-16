@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v1.1.0...v1.1.1) (2024-01-16)
+
+
+### Bug Fixes
+
+* re-added release-package.yml to actually publish the package ([dc2f49c](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/dc2f49cd33390f4bb1f151225dc39dda0e802730))
+
 ## [1.1.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v1.0.0...v1.1.0) (2024-01-16)
 
 
