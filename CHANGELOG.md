@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v1.1.2...v2.0.0) (2024-05-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* Add useLimboSearch ([#10](https://github.com/limbo-works/Limbo.Nuxt.Search/issues/10))
+
+### Features
+
+* Add useLimboSearch ([#10](https://github.com/limbo-works/Limbo.Nuxt.Search/issues/10)) ([ac46a1e](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/ac46a1ec6bacb2b501a98a17b028a18fa415483d))
+
 ## [1.1.2](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v1.1.1...v1.1.2) (2024-01-16)
 
 
