@@ -47,6 +47,40 @@ Then you can use the LimboSearch component anywhere within that solution:
 </div>
 ```
 
+You can also use the useLimboSearch composable within a solution. This is a more flexible solution in many cases.
+
+``` js
+const limboSearch = await useLimboSearch({
+	searchKey: route.path, /* or whatever key you want. This makes the search not interfere with other searches */
+	searchFilters: {
+		endpointUrl: '/api/search/',
+		fields: [/* some fields expected syntax: {name:'freetext', value: ''}, {name:'siteId', value: ''}*/ ],
+	},
+	config: {
+		immediateSearch: { useUrlQuery: true, ssr: true },
+		...
+	},
+});
+```
+
+useLimboSearch gives access to
+
+| props | description |
+| ----- | ----------- |
+| searchData | contains results, pagination etc.
+| state | A state object giving information about the current state of the LimboSearch component through the properties `hasFetchedOnce`, `hasMoreItems`, `isAppend`, `isLoading` and `isInitiated`. All of these are boolean values, except if doing a grouped search, then `hasMoreItems` is an object with keys for each group id (which will then have a boolean value).<br><ul><li>`hasFetchedOnce`: Whether the LimboSearch component has executed at least one search.</li><li>`hasMoreItems`: Whether there is more items to be fetched.</li><li>`isAppend`: Whether the current search is an appending search ("Fetch more/all").</li><li>`isLoading`: Whether the current search is currently fetching.</li><li>`isInitiated`: Wheter the search component has been initiated. This property will be false until either the `created`-event has run, or (if immediate search is turned on) until right before the first request is made.&nbsp;This property may be used to only insert the search filters or other elements on the page after the search is ready, to make sure the set values are in sync.</li></ul> |
+| query |  Object containing the `parameters`-property, which in turn contains the current search parameters in object form. |
+| requestSearch | performs a search without resetting pagination
+| fetchMore | fetches more results
+| fetchAll | fetches all available results
+| submit | submits a search
+| setUrlQuery | update the url
+| resetPagination | resets pagination
+| getSerializedParams | get serialized params
+| lastRequestedUrl | get previous search url
+| latestResponse | get previous search result
+
+
 ### Props overview
 
 | Prop | Description | Default value | Data type |
@@ -63,8 +97,9 @@ The configuration object (`config`-prop) allows you to finely tune the behaviour
 
 | Property | Description | Default value | Data type |
 | -------- | ----------- | ------------- | --------- |
+| callMethod | Can handle 'POST' and 'GET' | GET | String |
 | enableLiveSearch | Can be either an array of particular parameters that should trigger a live search or simply a true or false value. | false | Boolean\|Array |
-| immediateSearch | Tells whether the LimboSearch component should trigger a search immediatly on creation. The value may be either a boolean value or an object (which will be read as a truthy value), whereas the object can have a true `useUrlQuery` property to have the component read parameter values from the url query. | { useUrlQuery: true } | Boolean\|Object |
+| immediateSearch | Tells whether the LimboSearch component should trigger a search immediately on creation. The value may be either a boolean value or an object (which will be read as a truthy value), whereas the object can have a true `useUrlQuery` property to have the component read parameter values from the url query. `ssr` decides if results should be server side rendered on load. | { useUrlQuery: true, ssr: true } | Boolean\|Object |
 | clearRouterHashOnSearch | If set to true or given an object, a new search will trigger a removal of the hash from the route. Per default the initial search does not trigger this, but this can be changed by passing an object with `includeInitialSearch` set to true. | false | Boolean\|Object |
 | limit | The number of search results to fetch per search. If a numeric limit is set, it will be used for both values - grouped paginations\* should be set with the corresponding ids (fx. `limit: { l1: { initial: 18, value: 12 }, l2: { initial: 15, value: 6 } }`). When an object is used, the `initial`-property dictates the limit of a new search, whereas the `value`-property dictates the limit of additive searches ("fetch more"). The `initial`-property is not required. | { initial: 12, value: 12 } | Number\|Object |
 | enableGroupedSearch\* | Make use of grouped pagination (l1, o1, l2, o2, (ie. l{id}, o{id}) etc.) instead of simply "limit" and "offset". | false | Boolean |
@@ -78,6 +113,7 @@ The configuration object (`config`-prop) allows you to finely tune the behaviour
 | hiddenParameters | Parameters that should not be shown in the url but still be part of the search if present. | ['siteId', 'contextId', 'cultureId'] | Array |
 | defaultParameterValues | If the current parameter value is the same as the default value set here, the parameter will be hidden from the url query. | {} | Object |
 | searchResponseTransformerMethod | You can insert a method here to transform the response data from the endpoint in cases where the responses are formatted differently than expected\*\*. | res => res | Function |
+| searchBodyTransformerMethod | You can insert a method here to transform the searchBody data, ONLY used when callMethod is POST, can be used to send extra data to endpoint. Currently only used when calling external endpoint. | data => data | Function |
 | dataMergerMethod | If using grouped searching\* or if the search result isn't simply an array/as expected\*\*, you can insert a method here to handle the merging of data when doing a "fetch more/all" action. | (newData, oldData) => {/\* appends newData to oldData \*/} | Function |
 | dataOutputTransformerMethod | Method to change the search data output without changing the internal data or values. | (data) => data | Function |
 | searchDelay | A delay in milliseconds between changing filters and the actual search being executed. Required if using live-search. | 0 | Number |
@@ -175,7 +211,7 @@ The exposed slot props on the default slot will be the same data as sent out by 
 * Allow for deep-linking alá "when the search is done, go to this result".
 * Make a server-side search so that the results are already there when the page loads.
 * Improve handling of extra data from the search.
-* **Important:** Re-allign with [forms](<a href="https://gist.github.com/abjerner/7a539fbaa0657a7a1acfc23c9e30384a">https://gist.github.com/abjerner/7a539fbaa0657a7a1acfc23c9e30384a</a>) setup in terms of filter mutation and query transformation.
+* **Important:** Re-align with [forms](<a href="https://gist.github.com/abjerner/7a539fbaa0657a7a1acfc23c9e30384a">https://gist.github.com/abjerner/7a539fbaa0657a7a1acfc23c9e30384a</a>) setup in terms of filter mutation and query transformation.
 * Possibly move these items to be issues.
 
 <br>

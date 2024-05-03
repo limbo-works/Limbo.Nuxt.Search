@@ -70,7 +70,7 @@ export const useLimboSearch = async (options = {}) => {
 		dataMergerMethod: defaultDataMergerMethod, // { function } Method to merge new data with old data
 		dataOutputTransformerMethod: (val) => val, // { function } Method to transform the output data. Note that this method doesn't change the internally stored data, but only the data place in the bindings.
 		searchDelay: 0, // { number } Delay in ms before the search is triggered
-		urlFilterMapping: {}, // { object } Mapping for filters to url parameters
+		urlFilterMapping: {}, // { object } Mapping for filters to url parameters, NOT FULLY IMPLEMENTED YET
 	};
 
 	const defaultSearchData = {
