@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.0.0...v2.1.0) (2024-05-24)
+
+
+### Features
+
+* added more exposed values including composableInstance ([6818caa](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/6818caaaa07f248064dbb526772962173c70014b))
+
 ## [2.0.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v1.1.2...v2.0.0) (2024-05-03)
 
 
