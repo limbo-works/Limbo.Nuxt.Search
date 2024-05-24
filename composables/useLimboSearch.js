@@ -718,9 +718,16 @@ export const useLimboSearch = async (options = {}) => {
 	}
 
 	return reactive({
+		// Data
 		searchData,
+		compConfig,
 		state,
 		query,
+		lastRequestedUrl,
+		latestResponse,
+		watchedParameters,
+
+		// Methods
 		requestSearch,
 		fetchMore: compConfig.value.enableGroupedSearch
 			? fetchMoreGroup
@@ -732,8 +739,6 @@ export const useLimboSearch = async (options = {}) => {
 		setUrlQuery,
 		resetPagination,
 		getSerializedParams,
-		lastRequestedUrl,
-		latestResponse,
 	});
 
 	// Internal helper functions

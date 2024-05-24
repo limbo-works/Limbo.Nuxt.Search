@@ -47,6 +47,24 @@ const props = defineProps({
 });
 
 defineExpose({
+	// Data
+	get state() {
+		return limboSearch.state;
+	},
+	get query() {
+		return limboSearch.query;
+	},
+	get data() {
+		return limboSearch.searchData?.data;
+	},
+	get lastRequestedUrl() {
+		return limboSearch.lastRequestedUrl;
+	},
+	get latestResponse() {
+		return limboSearch.latestResponse;
+	},
+
+	// Methods
 	submit,
 	get fetchMore() {
 		return limboSearch.fetchMore;
@@ -63,11 +81,10 @@ defineExpose({
 	get getSerializedParams() {
 		return limboSearch.getSerializedParams;
 	},
-	get lastRequestedUrl() {
-		return limboSearch.lastRequestedUrl;
-	},
-	get latestResponse() {
-		return limboSearch.latestResponse;
+
+	// Instance
+	get composableInstance() {
+		return limboSearch;
 	},
 });
 

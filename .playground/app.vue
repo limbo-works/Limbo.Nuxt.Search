@@ -2,6 +2,7 @@
   <div>
     Hello World!
 	<LimboSearch
+		ref="limboSearch"
 		:search-filters="{
 			endpointUrl: 'https://www.jammerbugt.dk/api/jobs/search/',
 			fields: [{name: 'contextId', value: '1588'}, {name: 'text', value: ''}, {name:'limit', value: '16'}],
@@ -13,9 +14,9 @@
 			<pre>{{ data }}</pre>
 			<div
 				v-if="
-					pagination.total -
-						pagination.limit -
-						pagination.offset >
+					pagination?.total -
+						pagination?.limit -
+						pagination?.offset >
 						0
 				"
 				class="flex justify-center"
@@ -33,3 +34,9 @@
 	</LimboSearch>
   </div>
 </template>
+
+
+<script setup>
+const limboSearch = ref(null);
+console.log(limboSearch);
+</script>
