@@ -1,10 +1,5 @@
 <template>
-	<Component
-		:is="tag"
-		v-if="tag"
-		class="c-limbo-search"
-		v-bind="{ ...bindings }"
-	>
+	<Component :is="tag" v-if="tag" class="c-limbo-search">
 		<slot v-bind="bindings"></slot>
 	</Component>
 	<slot v-else v-bind="bindings"></slot>
@@ -62,6 +57,9 @@ defineExpose({
 	},
 	get latestResponse() {
 		return limboSearch.latestResponse;
+	},
+	get watchedParameters() {
+		return limboSearch.watchedParameters;
 	},
 
 	// Methods
