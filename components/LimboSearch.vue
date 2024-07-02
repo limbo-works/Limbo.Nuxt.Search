@@ -84,6 +84,9 @@ defineExpose({
 	get composableInstance() {
 		return limboSearch;
 	},
+	get options() {
+		return dynamicOptions.value;
+	},
 });
 
 const bindings = computed(() => {
@@ -104,16 +107,19 @@ const bindings = computed(() => {
 	};
 });
 
-const filters = toRef(props, 'searchFilters');
 const id = useId();
 
-const limboSearch = await useLimboSearch({
-	searchKey: props.searchKey ? props.searchKey : id,
-	searchFilters: filters,
-	config: props.config,
-	extraParameters: props.extraParameters,
-	parameterOverwrites: props.parameterOverwrites,
+const dynamicOptions = computed(() => {
+	return {
+		searchKey: props.searchKey ? props.searchKey : id,
+		searchFilters: props.searchFilters,
+		config: props.config,
+		extraParameters: props.extraParameters,
+		parameterOverwrites: props.parameterOverwrites,
+	};
 });
+
+const limboSearch = await useLimboSearch(dynamicOptions);
 
 watch(
 	() => limboSearch.state.isInitiated,
