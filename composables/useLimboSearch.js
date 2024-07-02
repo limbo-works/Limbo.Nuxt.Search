@@ -422,7 +422,7 @@ export const useLimboSearch = async (options = {}) => {
 							...defaultSearchData,
 							...searchData.value,
 						};
-						state.value.hasFetchedOnce = true;
+						state.value.hasFetchedOnce = import.meta.client;
 						if (compConfig.value.clearSearchDataOnError) {
 							state.value.hasMoreItems = null;
 							Object.assign(searchData.value, defaultSearchData);
@@ -438,7 +438,7 @@ export const useLimboSearch = async (options = {}) => {
 						}
 						searchData.value.error = response._data;
 						state.value.isLoading = false;
-						console.log('error', response._data);
+						console.error(response._data);
 					}
 				},
 			});
@@ -447,7 +447,7 @@ export const useLimboSearch = async (options = {}) => {
 				return;
 			}
 			if (!requestTimeout.value) {
-				state.value.hasFetchedOnce = true;
+				state.value.hasFetchedOnce = import.meta.client;
 				let response =
 					compConfig.value.searchResponseTransformerMethod?.(data) ??
 					data;
@@ -542,6 +542,7 @@ export const useLimboSearch = async (options = {}) => {
 		}
 		await searchRequest();
 	}
+
 	function getSerializedParams(parameters = parameters.value) {
 		const array = [];
 		for (const key in parameters) {
@@ -742,6 +743,7 @@ export const useLimboSearch = async (options = {}) => {
 				}
 			}
 		}
+
 		await requestSearch({ delay: 0 });
 	}
 
