@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.1.0...v2.2.0) (2024-07-02)
+
+
+### Features
+
+* added watched parameters to component ([339c41c](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/339c41c9467a0d8ef4ec62d15a1472e4437ce9dc))
+
 ## [2.1.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.0.0...v2.1.0) (2024-05-24)
 
 
