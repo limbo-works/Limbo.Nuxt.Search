@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.1](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.2.0...v2.2.1) (2024-07-12)
+
+
+### Features
+
+* Upgrade reactivity ([#16](https://github.com/limbo-works/Limbo.Nuxt.Search/issues/16)) ([f380da3](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/f380da370e1861ddf740557d8ce0a6724163840e))
+
 ## [2.2.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.1.0...v2.2.0) (2024-07-02)
 
 
