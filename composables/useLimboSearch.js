@@ -71,13 +71,18 @@ export const useLimboSearch = async (options = {}) => {
 		persistentParameters: ['contextId'], // { array } Parameters that should always be present in a search (empty or not)
 		hiddenParameters: ['siteId', 'contextId', 'pageId', 'cultureId'], // { array } Parameters that should not be shown in the url.
 		defaultParameterValues: {}, // { object } Default values for parameters - parameters will not be shown in the url if they have the same value as the default value
+
+		searchDelay: 0, // { number } Delay in ms before the search is triggered
+		urlFilterMapping: {}, // { object } Mapping for filters to url parameters, NOT FULLY IMPLEMENTED YET
+
 		// Data transformation methods
 		searchResponseTransformerMethod: (val) => val, // { function } Method to transform the response data
 		searchBodyTransformerMethod: (val) => val, // { function } Method to transform the searchBody data, ONLY used when callMethod is POST
 		dataMergerMethod: defaultDataMergerMethod, // { function } Method to merge new data with old data
 		dataOutputTransformerMethod: (val) => val, // { function } Method to transform the output data. Note that this method doesn't change the internally stored data, but only the data place in the bindings.
-		searchDelay: 0, // { number } Delay in ms before the search is triggered
-		urlFilterMapping: {}, // { object } Mapping for filters to url parameters, NOT FULLY IMPLEMENTED YET
+
+		// Hooks
+		onInit: () => {}, // { function } Hook for when the search is initiated. The reactive Limbo search object is passed as the first argument.
 	};
 
 	const defaultSearchData = {
@@ -300,36 +305,48 @@ export const useLimboSearch = async (options = {}) => {
 		requestSearch();
 	}
 
-	function fetchMore(
-		amount = (compConfig.value.limit?.value ??
-			parseInt(compConfig.value.limit)) ||
-			defaultLimit
-	) {
+	function fetchMore(amount) {
+		// Set a default amount if none is provided
+		amount ??=
+			(compConfig.value.limit?.value ??
+				parseInt(compConfig.value.limit)) ||
+			defaultLimit;
+		amount = +amount;
+
+		// Cancel out if we are already loading or there are no more items
 		if (state.value.isLoading || !state.value.hasMoreItems) {
 			return;
 		}
-		internalPagination.value.offset +=
+
+		// Set new internal pagination
+		internalPagination.value.offset += internalPagination.value.limit ?? 0;
+		internalPagination.value.limit =
 			amount ?? internalPagination.value.limit;
+
+		// Request the search
 		requestSearch({ append: true });
 	}
 	function fetchMoreGroup(id, amount) {
 		if (!searchData?.value?.error && state.value.hasMoreItems?.[id]) {
 			// Make sure that we don't fetch the other groups as well
 			internalExtraParameters.value[compConfig.value.groupParameter] = id;
-			// Get the amount if none is set
-			if (typeof amount === 'undefined') {
-				amount =
-					(compConfig.value.limit[id]?.value ??
-						parseInt(compConfig.value.limit[id])) ||
-					defaultLimit;
-			}
-			// Fetch
+
+			// Set a default amount if none is provided
+			amount ??=
+				(compConfig.value.limit[id]?.value ??
+					parseInt(compConfig.value.limit[id])) ||
+				defaultLimit;
+			amount = +amount;
+
+			// Set new internal pagination
 			const internal = internalPagination.value[id] || {};
 			internal.offset =
 				+searchData?.value?.pagination?.[id]?.offset +
 				+searchData?.value?.pagination?.[id]?.limit;
 			internal.limit = +amount;
 			internalPagination.value[id] = internal;
+
+			// Request the search
 			requestSearch({ append: true });
 		}
 	}
@@ -541,6 +558,10 @@ export const useLimboSearch = async (options = {}) => {
 			});
 		}
 		await searchRequest();
+		compConfig.value.onAfterSearch?.(
+			JSON.parse(JSON.stringify(searchData.value)),
+			JSON.parse(JSON.stringify(state.value))
+		);
 	}
 
 	function getSerializedParams(parameters = parameters.value) {
@@ -747,7 +768,7 @@ export const useLimboSearch = async (options = {}) => {
 		await requestSearch({ delay: 0 });
 	}
 
-	return reactive({
+	const limboSearch = reactive({
 		// Data
 		searchData,
 		compConfig,
@@ -770,6 +791,9 @@ export const useLimboSearch = async (options = {}) => {
 		resetPagination,
 		getSerializedParams,
 	});
+
+	compConfig.value.onInit?.(limboSearch);
+	return limboSearch;
 
 	// Internal helper functions
 	function removeReservedParameters(filters) {

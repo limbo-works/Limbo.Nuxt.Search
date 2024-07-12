@@ -84,6 +84,7 @@ defineExpose({
 	get composableInstance() {
 		return limboSearch;
 	},
+
 	get options() {
 		return dynamicOptions.value;
 	},
