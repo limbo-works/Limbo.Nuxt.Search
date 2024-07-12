@@ -1,14 +1,21 @@
 export const useLimboSearch = async (options = {}) => {
+	/*
+		Options
+		we repeat this way of getting variables in every function, computed
+		value or watcher in which they are used as to keep reactivity, though
+		we have left them in commented for the sake of clarity.
+
+		Except the searchKey, which should not be replaced post initiation!
+	*/
 	const {
-		searchKey = "",
-		searchFilters,
-		config = {},
-		extraParameters = {},
-		parameterOverwrites = {},
-	} = options;
+		searchKey = '',
+		// searchFilters,
+		// config = {},
+		// extraParameters = {},
+		// parameterOverwrites = {},
+	} = toValue(options || {});
 
-	//const emits = defineEmits(['init', 'update', 'error']);
-
+	// Default methods and values
 	const defaultDataMergerMethod = (newData, oldData) => {
 		if (
 			newData &&
@@ -46,7 +53,7 @@ export const useLimboSearch = async (options = {}) => {
 
 	const defaultLimit = 12;
 	const defaultConfig = {
-		callMethod: "GET", // { string } The method to use for the call
+		callMethod: 'GET', // { string } The method to use for the call
 		enableLiveSearch: false, // { boolean|array } Can be an array of particular parameters triggering a live search or simply true or false
 		immediateSearch: {
 			useUrlQuery: true,
@@ -55,22 +62,27 @@ export const useLimboSearch = async (options = {}) => {
 		clearRouterHashOnSearch: false, // { boolean|object } Whether to clear the hash on search. If an object is used, the property "includeInitialSearch" to also clear for the first search, else that will be left out
 		limit: { initial: defaultLimit, value: defaultLimit }, // { number|object } If a numeric limit is set, it will be used for both values - grouped paginations should be set with their ids (fx. limit: { 1: { initial: 18, value: 12 }, 2: { initial: 15, value: 6 } }).
 		enableGroupedSearch: false, // { boolean } Make use of grouped pagination (l1, o1, l2, o2, (ie. l{id}, o{id}) etc.) instead of simply "limit" and "offset".
-		groupParameter: "groups", // { string } When needing to "fetch more / all" we need a parameter to filter that.
+		groupParameter: 'groups', // { string } When needing to "fetch more / all" we need a parameter to filter that.
 		updateUrlQueryOnSearch: true, // { boolean } Allow the page's url to reflect the search
 		updateVueRouteOnSearch: false, // { boolean|object } Allow the vue router to reflect the search - may cause issues if the page is keyed based off the query. /* NOT FULLY DONE YET (DON'T CURRENTLY RE-SEARCH): If an object is used, set "pushHistory" to make each individual search part of the browser history. */
 		clearSearchDataOnError: true, // { boolean } When toggled to false, the data from the previous search will persist on error
 		allowSearchFiltersMutation: false, // { boolean } Needs to be explicitly turned on!
 		updateSearchFiltersOnBindingChange: true, // { boolean } Whether a change in the bound search filters should trigger a change in the internally used data
-		persistentParameters: ["contextId"], // { array } Parameters that should always be present in a search (empty or not)
-		hiddenParameters: ["siteId", "contextId", "pageId", "cultureId"], // { array } Parameters that should not be shown in the url.
+		persistentParameters: ['contextId'], // { array } Parameters that should always be present in a search (empty or not)
+		hiddenParameters: ['siteId', 'contextId', 'pageId', 'cultureId'], // { array } Parameters that should not be shown in the url.
 		defaultParameterValues: {}, // { object } Default values for parameters - parameters will not be shown in the url if they have the same value as the default value
+
+		searchDelay: 0, // { number } Delay in ms before the search is triggered
+		urlFilterMapping: {}, // { object } Mapping for filters to url parameters, NOT FULLY IMPLEMENTED YET
+
 		// Data transformation methods
 		searchResponseTransformerMethod: (val) => val, // { function } Method to transform the response data
 		searchBodyTransformerMethod: (val) => val, // { function } Method to transform the searchBody data, ONLY used when callMethod is POST
 		dataMergerMethod: defaultDataMergerMethod, // { function } Method to merge new data with old data
 		dataOutputTransformerMethod: (val) => val, // { function } Method to transform the output data. Note that this method doesn't change the internally stored data, but only the data place in the bindings.
-		searchDelay: 0, // { number } Delay in ms before the search is triggered
-		urlFilterMapping: {}, // { object } Mapping for filters to url parameters, NOT FULLY IMPLEMENTED YET
+
+		// Hooks
+		onInit: () => {}, // { function } Hook for when the search is initiated. The reactive Limbo search object is passed as the first argument.
 	};
 
 	const defaultSearchData = {
@@ -81,13 +93,21 @@ export const useLimboSearch = async (options = {}) => {
 		misc: null,
 		error: null,
 	};
-	const reservedParameters = ["limit", "offset", "total"];
+	const reservedParameters = ['limit', 'offset', 'total'];
 
 	const lastRequestedUrl = ref(null);
 
 	const searchData = useState(`searchData${searchKey}`, () =>
 		JSON.parse(JSON.stringify(defaultSearchData))
 	);
+
+	const searchFilters = computed(() => {
+		const { searchFilters } = toValue(options || {});
+		if (searchFilters && isRef(searchFilters)) {
+			return searchFilters.value;
+		}
+		return searchFilters;
+	});
 
 	const internalSearchFilters = ref(
 		removeReservedParameters(searchFilters.value)
@@ -114,6 +134,7 @@ export const useLimboSearch = async (options = {}) => {
 	const latestResponse = ref(null);
 
 	const compConfig = computed(() => {
+		const { config = {} } = toValue(options || {});
 		const _return = { ...defaultConfig, ...config };
 		if (
 			_return.dataMergerMethod === defaultDataMergerMethod &&
@@ -132,10 +153,10 @@ export const useLimboSearch = async (options = {}) => {
 	});
 
 	const endpointUrl = computed(() => {
-		return filters.value.endpointUrl;
+		return filters.value?.endpointUrl;
 	});
 	const fields = computed(() => {
-		return filters.value.fields;
+		return filters.value?.fields;
 	});
 
 	const searchFilterParameters = computed(() => {
@@ -162,16 +183,19 @@ export const useLimboSearch = async (options = {}) => {
 		}
 		const pagination = { limit: 0, offset: 0 };
 		const { limit, offset } = internalPagination.value ?? {};
-		if (typeof limit !== "undefined") {
+		if (typeof limit !== 'undefined') {
 			pagination.limit = limit;
 		}
-		if (typeof offset !== "undefined") {
+		if (typeof offset !== 'undefined') {
 			pagination.offset = offset;
 		}
 		return pagination;
 	});
 
 	const watchedParameters = computed(() => {
+		const { extraParameters = {}, parameterOverwrites = {} } = toValue(
+			options || {}
+		);
 		const parameters = {
 			...extraParameters,
 			...searchFilterParameters.value,
@@ -183,6 +207,9 @@ export const useLimboSearch = async (options = {}) => {
 	});
 
 	const parameters = computed(() => {
+		const { extraParameters = {}, parameterOverwrites = {} } = toValue(
+			options || {}
+		);
 		const parameters = {
 			...extraParameters,
 			...internalExtraParameters.value,
@@ -203,11 +230,12 @@ export const useLimboSearch = async (options = {}) => {
 	});
 
 	const hideGroupsParameter = computed(() => {
+		const { parameterOverwrites = {} } = toValue(options || {});
 		if (
 			compConfig.value.enableGroupedSearch &&
 			typeof internalExtraParameters.value[
 				compConfig.value.groupParameter
-			] !== "undefined"
+			] !== 'undefined'
 		) {
 			const parameters = {
 				...searchFilterParameters.value,
@@ -230,7 +258,7 @@ export const useLimboSearch = async (options = {}) => {
 	});
 
 	watch(
-		() => searchFilters.value,
+		searchFilters,
 		(newFilters) => {
 			if (compConfig.value.updateSearchFiltersOnBindingChange) {
 				internalSearchFilters.value =
@@ -244,7 +272,7 @@ export const useLimboSearch = async (options = {}) => {
 	);
 
 	watch(
-		() => watchedParameters,
+		watchedParameters,
 		(newParams, oldParams) => {
 			const { enableLiveSearch } = compConfig.value;
 			if (enableLiveSearch) {
@@ -277,35 +305,48 @@ export const useLimboSearch = async (options = {}) => {
 		requestSearch();
 	}
 
-	function fetchMore(
-		amount = (compConfig.value.limit?.value ??
-			parseInt(compConfig.value.limit)) ||
-			defaultLimit
-	) {
+	function fetchMore(amount) {
+		// Set a default amount if none is provided
+		amount ??=
+			(compConfig.value.limit?.value ??
+				parseInt(compConfig.value.limit)) ||
+			defaultLimit;
+		amount = +amount;
+
+		// Cancel out if we are already loading or there are no more items
 		if (state.value.isLoading || !state.value.hasMoreItems) {
 			return;
 		}
-		internalPagination.value.offset += internalPagination.value.limit;
+
+		// Set new internal pagination
+		internalPagination.value.offset += internalPagination.value.limit ?? 0;
+		internalPagination.value.limit =
+			amount ?? internalPagination.value.limit;
+
+		// Request the search
 		requestSearch({ append: true });
 	}
 	function fetchMoreGroup(id, amount) {
 		if (!searchData?.value?.error && state.value.hasMoreItems?.[id]) {
 			// Make sure that we don't fetch the other groups as well
 			internalExtraParameters.value[compConfig.value.groupParameter] = id;
-			// Get the amount if none is set
-			if (typeof amount === "undefined") {
-				amount =
-					(compConfig.value.limit[id]?.value ??
-						parseInt(compConfig.value.limit[id])) ||
-					defaultLimit;
-			}
-			// Fetch
+
+			// Set a default amount if none is provided
+			amount ??=
+				(compConfig.value.limit[id]?.value ??
+					parseInt(compConfig.value.limit[id])) ||
+				defaultLimit;
+			amount = +amount;
+
+			// Set new internal pagination
 			const internal = internalPagination.value[id] || {};
 			internal.offset =
 				+searchData?.value?.pagination?.[id]?.offset +
 				+searchData?.value?.pagination?.[id]?.limit;
 			internal.limit = +amount;
 			internalPagination.value[id] = internal;
+
+			// Request the search
 			requestSearch({ append: true });
 		}
 	}
@@ -381,7 +422,7 @@ export const useLimboSearch = async (options = {}) => {
 			requestTimeout.value = null;
 
 			lastRequestedUrl.value = `${endpointUrl.value}?${serializedParams}`;
-			if (compConfig.value.callMethod === "POST") {
+			if (compConfig.value.callMethod === 'POST') {
 				lastRequestedUrl.value = endpointUrl.value;
 			}
 			state.value.isAppend = !!append;
@@ -389,16 +430,16 @@ export const useLimboSearch = async (options = {}) => {
 			const data = await $fetch(lastRequestedUrl.value, {
 				method: compConfig.value.callMethod,
 				body:
-					compConfig.value.callMethod === "POST"
+					compConfig.value.callMethod === 'POST'
 						? compConfig.value.searchBodyTransformerMethod(params)
 						: null,
-				onResponseError({ request, response, options }) {
+				onResponseError({ response }) {
 					if (!requestTimeout.value) {
 						searchData.value = {
 							...defaultSearchData,
 							...searchData.value,
 						};
-						state.value.hasFetchedOnce = true;
+						state.value.hasFetchedOnce = import.meta.client;
 						if (compConfig.value.clearSearchDataOnError) {
 							state.value.hasMoreItems = null;
 							Object.assign(searchData.value, defaultSearchData);
@@ -414,7 +455,7 @@ export const useLimboSearch = async (options = {}) => {
 						}
 						searchData.value.error = response._data;
 						state.value.isLoading = false;
-						console.log("error", response._data);
+						console.error(response._data);
 					}
 				},
 			});
@@ -423,7 +464,7 @@ export const useLimboSearch = async (options = {}) => {
 				return;
 			}
 			if (!requestTimeout.value) {
-				state.value.hasFetchedOnce = true;
+				state.value.hasFetchedOnce = import.meta.client;
 				let response =
 					compConfig.value.searchResponseTransformerMethod?.(data) ??
 					data;
@@ -471,7 +512,7 @@ export const useLimboSearch = async (options = {}) => {
 						searchData.value.pagination = {};
 					}
 					response?.groups?.forEach((group) => {
-						if ("id" in group) {
+						if ('id' in group) {
 							searchData.value.pagination[group.id] = {
 								limit: group.limit || 0,
 								offset: group.offset || 0,
@@ -510,14 +551,19 @@ export const useLimboSearch = async (options = {}) => {
 			}
 		};
 		// Run on client or server
-		if (typeof window !== "undefined" && delay > 0) {
+		if (typeof window !== 'undefined' && delay > 0) {
 			await new Promise((resolve) => {
 				window.clearTimeout(requestTimeout.value);
 				requestTimeout.value = window.setTimeout(resolve, delay);
 			});
 		}
 		await searchRequest();
+		compConfig.value.onAfterSearch?.(
+			JSON.parse(JSON.stringify(searchData.value)),
+			JSON.parse(JSON.stringify(state.value))
+		);
 	}
+
 	function getSerializedParams(parameters = parameters.value) {
 		const array = [];
 		for (const key in parameters) {
@@ -536,10 +582,10 @@ export const useLimboSearch = async (options = {}) => {
 					value != compConfig.value.defaultParameterValues?.[key]) ||
 				isPersistent
 			) {
-				array.push(`${key}=${value ?? ""}`);
+				array.push(`${key}=${value ?? ''}`);
 			}
 		}
-		return array.join("&");
+		return array.join('&');
 	}
 
 	function resetPagination() {
@@ -577,9 +623,9 @@ export const useLimboSearch = async (options = {}) => {
 	const router = useRouter();
 
 	function setUrlQuery(query = getSerializedParams(), clearHash = false) {
-		const array = query.split("&").filter((item) => {
-			const key = item.split("=").shift();
-			let value = item.split("=").pop();
+		const array = query.split('&').filter((item) => {
+			const key = item.split('=').shift();
+			let value = item.split('=').pop();
 			// TODO: implement urlFilterMapping
 
 			if (
@@ -615,15 +661,15 @@ export const useLimboSearch = async (options = {}) => {
 
 			if (
 				key in defaultParameterValues &&
-				String(defaultParameterValues[key]) === (value ?? "")
+				String(defaultParameterValues[key]) === (value ?? '')
 			) {
 				return false;
 			}
 			return !compConfig.value.hiddenParameters?.includes?.(key);
 		});
 		const transformedArray = array.map((item) => {
-			const key = item.split("=").shift();
-			let value = item.split("=").pop();
+			const key = item.split('=').shift();
+			let value = item.split('=').pop();
 			if (key in compConfig.value.urlFilterMapping) {
 				const mappedKey = compConfig.value.urlFilterMapping[key];
 				if (value in mappedKey) {
@@ -634,15 +680,15 @@ export const useLimboSearch = async (options = {}) => {
 		});
 
 		const url =
-			[route.path, transformedArray.join("&")].filter(Boolean).join("?") +
+			[route.path, transformedArray.join('&')].filter(Boolean).join('?') +
 			(clearHash
-				? ""
-				: typeof window !== "undefined"
+				? ''
+				: typeof window !== 'undefined'
 				? window.location.hash
 				: route.hash);
 
 		const oldUrl =
-			typeof window === "undefined"
+			typeof window === 'undefined'
 				? route.fullPath
 				: [
 						window.location.pathname,
@@ -650,10 +696,10 @@ export const useLimboSearch = async (options = {}) => {
 						window.location.hash,
 				  ]
 						.filter(Boolean)
-						.join("");
-		typeof window !== "undefined" &&
+						.join('');
+		typeof window !== 'undefined' &&
 			compConfig.value.updateUrlQueryOnSearch &&
-			window.history.replaceState(window.history.state, "", url);
+			window.history.replaceState(window.history.state, '', url);
 
 		if (
 			compConfig.value.updateVueRouteOnSearch &&
@@ -665,11 +711,11 @@ export const useLimboSearch = async (options = {}) => {
 		}
 		// Edge case, but might as well handle it
 		if (
-			typeof window !== "undefined" &&
+			typeof window !== 'undefined' &&
 			compConfig.value.updateVueRouteOnSearch &&
 			compConfig.value.updateUrlQueryOnSearch
 		) {
-			window.history.replaceState(window.history.state, "", oldUrl);
+			window.history.replaceState(window.history.state, '', oldUrl);
 		}
 	}
 
@@ -680,11 +726,15 @@ export const useLimboSearch = async (options = {}) => {
 	}
 
 	if (
-		compConfig.value.immediateSearch?.ssr &&
-		compConfig.value.immediateSearch
+		compConfig.value.immediateSearch &&
+		(compConfig.value.immediateSearch?.ssr ||
+			typeof compConfig.value.immediateSearch === 'boolean')
 	) {
 		resetPagination();
-		if (compConfig.value.immediateSearch?.useUrlQuery) {
+		if (
+			compConfig.value.immediateSearch?.useUrlQuery ||
+			typeof compConfig.value.immediateSearch === 'boolean'
+		) {
 			mixParametersFromUrl();
 			if (compConfig.value.enableGroupedSearch) {
 				// Grouped pagination
@@ -714,10 +764,11 @@ export const useLimboSearch = async (options = {}) => {
 				}
 			}
 		}
+
 		await requestSearch({ delay: 0 });
 	}
 
-	return reactive({
+	const limboSearch = reactive({
 		// Data
 		searchData,
 		compConfig,
@@ -741,9 +792,12 @@ export const useLimboSearch = async (options = {}) => {
 		getSerializedParams,
 	});
 
+	compConfig.value.onInit?.(limboSearch);
+	return limboSearch;
+
 	// Internal helper functions
 	function removeReservedParameters(filters) {
-		const newFilters = { ...filters };
+		const newFilters = { ...(filters || {}) };
 		if (filters?.fields && Array.isArray(filters.fields)) {
 			newFilters.fields = filters.fields.filter(
 				(field) =>
@@ -758,10 +812,10 @@ export const useLimboSearch = async (options = {}) => {
 			const newPagination = {};
 			for (const key in pagination) {
 				const value = pagination[key];
-				if (typeof value?.limit !== "undefined") {
+				if (typeof value?.limit !== 'undefined') {
 					newPagination[`l${key}`] = value.limit;
 				}
-				if (typeof value?.offset !== "undefined") {
+				if (typeof value?.offset !== 'undefined') {
 					newPagination[`o${key}`] = value.offset;
 				}
 			}
@@ -771,7 +825,7 @@ export const useLimboSearch = async (options = {}) => {
 	}
 
 	function setSearchFilterField(key, value) {
-		const { fields } = filters.value;
+		const { fields = [] } = filters.value || {};
 		const field = fields.find((field) => {
 			return field.name === key;
 		});
@@ -784,7 +838,7 @@ export const useLimboSearch = async (options = {}) => {
 					});
 				}
 			} else {
-				field.value = value ?? "";
+				field.value = value ?? '';
 			}
 			return true;
 		}
@@ -798,21 +852,21 @@ export const useLimboSearch = async (options = {}) => {
 
 			// Set key as pagination
 			if (compConfig.value.enableGroupedSearch) {
-				const array = key.toLowerCase().split("");
+				const array = key.toLowerCase().split('');
 				const firstLetter = array.shift();
-				const remainder = array.join("");
+				const remainder = array.join('');
 				if (
-					(firstLetter === "o" || firstLetter === "l") &&
+					(firstLetter === 'o' || firstLetter === 'l') &&
 					remainder === String(parseInt(remainder))
 				) {
 					const object = Object.assign(
 						{ limit: 0, offset: 0 },
 						internalPagination?.value?.[remainder]
 					);
-					if (firstLetter === "o") {
+					if (firstLetter === 'o') {
 						object.offset = parseInt(value);
 					}
-					if (firstLetter === "l") {
+					if (firstLetter === 'l') {
 						object.limit = parseInt(value);
 					}
 					internalPagination.value = Object.assign(
@@ -824,7 +878,7 @@ export const useLimboSearch = async (options = {}) => {
 					continue;
 				}
 			} else {
-				if (key.toLowerCase() === "limit") {
+				if (key.toLowerCase() === 'limit') {
 					if (!internalPagination.value) {
 						internalPagination.value = {
 							limit: parseInt(value),
@@ -834,7 +888,7 @@ export const useLimboSearch = async (options = {}) => {
 					}
 					internalPagination.value.limit = parseInt(value);
 					continue;
-				} else if (key.toLowerCase() === "offset") {
+				} else if (key.toLowerCase() === 'offset') {
 					if (!internalPagination.value) {
 						internalPagination.value = {
 							limit: 0,
