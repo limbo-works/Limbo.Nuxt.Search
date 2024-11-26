@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.2.1...v2.3.0) (2024-11-26)
+
+
+### Features
+
+* clear Nuxt state on unmount ([84e309b](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/84e309b6f2937cbf8d960549c226ffb6109dff41))
+
 ## [2.2.1](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.2.0...v2.2.1) (2024-07-12)
 
 
