@@ -6,19 +6,19 @@
 </template>
 
 <script setup>
-const emits = defineEmits(['init', 'update', 'error']);
+const emits = defineEmits(["init", "update", "error"]);
 
 const props = defineProps({
 	tag: {
 		type: String,
-		default: 'div',
+		default: "div",
 	},
 	searchFilters: {
 		type: Object,
 		required: true,
 		validator(obj) {
 			return (
-				typeof obj.endpointUrl === 'string' && Array.isArray(obj.fields)
+				typeof obj.endpointUrl === "string" && Array.isArray(obj.fields)
 			);
 		},
 	},
@@ -37,7 +37,7 @@ const props = defineProps({
 	},
 	searchKey: {
 		type: String,
-		default: '',
+		default: "",
 	},
 });
 
@@ -108,11 +108,10 @@ const bindings = computed(() => {
 	};
 });
 
-const id = useId();
-
+const route = useRoute();
 const dynamicOptions = computed(() => {
 	return {
-		searchKey: props.searchKey ? props.searchKey : id,
+		searchKey: props.searchKey ? props.searchKey : route.path,
 		searchFilters: props.searchFilters,
 		config: props.config,
 		extraParameters: props.extraParameters,
@@ -126,14 +125,14 @@ watch(
 	() => limboSearch.state.isInitiated,
 	(isInitiated) => {
 		if (isInitiated) {
-			emits('init', true);
+			emits("init", true);
 		}
 	}
 );
 
 // can we get the functions from the limboSearch object directly without adding them here..
 function submit() {
-	emits('update', true);
+	emits("update", true);
 	limboSearch?.submit();
 }
 </script>
