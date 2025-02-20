@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.4.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.3.0...v2.4.0) (2025-02-20)
+
+
+### Features
+
+* add `resetState` function & `isUpdated` state value ([a860020](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/a8600204a909604df62201f1ffb326b1b5b7bfaa))
+* exposed `resetState` function on LimboSearch component ([c622566](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/c622566d9493e3dc88598734271bace5b799a910))
+
+
+### Bug Fixes
+
+* update README ([de65093](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/de650936a32993d0fada628bbf5ef0810255ad5e))
+
 ## [2.3.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.2.1...v2.3.0) (2024-11-26)
 
 
