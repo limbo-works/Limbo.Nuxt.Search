@@ -76,6 +76,9 @@ defineExpose({
 	get resetPagination() {
 		return limboSearch.resetPagination;
 	},
+	get resetState() {
+		return limboSearch.resetState;
+	},
 	get getSerializedParams() {
 		return limboSearch.getSerializedParams;
 	},
@@ -103,6 +106,7 @@ const bindings = computed(() => {
 			fetchAll: limboSearch.fetchAll,
 			setUrlQuery: limboSearch.setUrlQuery,
 			resetPagination: limboSearch.resetPagination,
+			resetState: limboSearch.resetState,
 			getSerializedParams: limboSearch.getSerializedParams,
 		},
 	};
