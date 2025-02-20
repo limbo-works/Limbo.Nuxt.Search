@@ -131,6 +131,7 @@ export const useLimboSearch = async (options = {}) => {
 		hasFetchedOnce: false,
 		hasMoreItems: undefined,
 		isAppend: false,
+		isUpdated: false,
 	}));
 	const query = ref({
 		parameters: null,
@@ -445,7 +446,7 @@ export const useLimboSearch = async (options = {}) => {
 						};
 						state.value.hasFetchedOnce = import.meta.client;
 						if (compConfig.value.clearSearchDataOnError) {
-							state.value.hasMoreItems = null;
+							state.value.hasMoreItems = undefined;
 							Object.assign(searchData.value, defaultSearchData);
 							latestResponse.value = null;
 						} else {
@@ -463,6 +464,15 @@ export const useLimboSearch = async (options = {}) => {
 					}
 				},
 			});
+
+			if (
+				latestResponse.value !== null &&
+				JSON.stringify(latestResponse.value) != JSON.stringify(data)
+			) {
+				state.value.isUpdated = true;
+			} else {
+				state.value.isUpdated = false;
+			}
 
 			if (lastRequestedUrl.value != currentlyRequestedUrl) {
 				return;
@@ -622,6 +632,17 @@ export const useLimboSearch = async (options = {}) => {
 				defaultLimit;
 			internalPagination.value.offset = 0;
 		}
+	}
+
+	function resetState() {
+		state.value = {
+			isInitiated: false,
+			isLoading: false,
+			hasFetchedOnce: false,
+			hasMoreItems: undefined,
+			isAppend: false,
+			isUpdated: false,
+		};
 	}
 
 	const router = useRouter();
@@ -793,6 +814,7 @@ export const useLimboSearch = async (options = {}) => {
 		submit,
 		setUrlQuery,
 		resetPagination,
+		resetState,
 		getSerializedParams,
 	});
 
