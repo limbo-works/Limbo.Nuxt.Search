@@ -67,8 +67,14 @@ defineExpose({
 	get fetchMore() {
 		return limboSearch.fetchMore;
 	},
+	get fetchMoreAsync() {
+		return limboSearch.fetchMoreAsync;
+	},
 	get fetchAll() {
 		return limboSearch.fetchAll;
+	},
+	get fetchAllAsync() {
+		return limboSearch.fetchAllAsync;
 	},
 	get setUrlQuery() {
 		return limboSearch.setUrlQuery;

@@ -331,6 +331,28 @@ export const useLimboSearch = async (options = {}) => {
 		// Request the search
 		requestSearch({ append: true });
 	}
+	async function fetchMoreAsync(amount) {
+		// Set a default amount if none is provided
+		amount ??=
+			(compConfig.value.limit?.value ??
+				parseInt(compConfig.value.limit)) ||
+			defaultLimit;
+		amount = +amount;
+
+		// Cancel out if we are already loading or there are no more items
+		if (state.value.isLoading || !state.value.hasMoreItems) {
+			return;
+		}
+
+		// Set new internal pagination
+		internalPagination.value.offset += internalPagination.value.limit ?? 0;
+		internalPagination.value.limit =
+			amount ?? internalPagination.value.limit;
+
+		// Request the search
+		await requestSearch({ append: true });
+	}
+
 	function fetchMoreGroup(id, amount) {
 		if (!searchData?.value?.error && state.value.hasMoreItems?.[id]) {
 			// Make sure that we don't fetch the other groups as well
@@ -355,6 +377,30 @@ export const useLimboSearch = async (options = {}) => {
 			requestSearch({ append: true });
 		}
 	}
+	async function fetchMoreGroupAsync(id, amount) {
+		if (!searchData?.value?.error && state.value.hasMoreItems?.[id]) {
+			// Make sure that we don't fetch the other groups as well
+			internalExtraParameters.value[compConfig.value.groupParameter] = id;
+
+			// Set a default amount if none is provided
+			amount ??=
+				(compConfig.value.limit[id]?.value ??
+					parseInt(compConfig.value.limit[id])) ||
+				defaultLimit;
+			amount = +amount;
+
+			// Set new internal pagination
+			const internal = internalPagination.value[id] || {};
+			internal.offset =
+				+searchData?.value?.pagination?.[id]?.offset +
+				+searchData?.value?.pagination?.[id]?.limit;
+			internal.limit = +amount;
+			internalPagination.value[id] = internal;
+
+			// Request the search
+			await requestSearch({ append: true });
+		}
+	}
 
 	function fetchAll() {
 		if (!searchData?.value?.error && state.value.hasMoreItems) {
@@ -365,6 +411,17 @@ export const useLimboSearch = async (options = {}) => {
 				+searchData?.value?.pagination?.total -
 				internalPagination.value.offset;
 			requestSearch({ append: true });
+		}
+	}
+	async function fetchAllAsync() {
+		if (!searchData?.value?.error && state.value.hasMoreItems) {
+			internalPagination.value.offset =
+				+searchData?.value?.pagination?.offset +
+				+searchData?.value?.pagination?.limit;
+			internalPagination.value.limit =
+				+searchData?.value?.pagination?.total -
+				internalPagination.value.offset;
+			await requestSearch({ append: true });
 		}
 	}
 
@@ -382,6 +439,22 @@ export const useLimboSearch = async (options = {}) => {
 				+searchData?.value?.pagination?.[id]?.total - internal.offset;
 			internalPagination.value[id] = internal;
 			requestSearch({ append: true });
+		}
+	}
+	async function fetchAllGroupAsync(id) {
+		if (!searchData?.value?.error && state.value.hasMoreItems?.[id]) {
+			// Make sure that we don't fetch the other groups as well
+			internalExtraParameters.value[compConfig.value.groupParameter] = id;
+
+			// Fetch
+			const internal = internalPagination.value[id] || {};
+			internal.offset =
+				+searchData?.value?.pagination?.[id]?.offset +
+				+searchData?.value?.pagination?.[id]?.limit;
+			internal.limit =
+				+searchData?.value?.pagination?.[id]?.total - internal.offset;
+			internalPagination.value[id] = internal;
+			await requestSearch({ append: true });
 		}
 	}
 
@@ -808,9 +881,15 @@ export const useLimboSearch = async (options = {}) => {
 		fetchMore: compConfig.value.enableGroupedSearch
 			? fetchMoreGroup
 			: fetchMore,
+		fetchMoreAsync: compConfig.value.enableGroupedSearch
+			? fetchMoreGroupAsync
+			: fetchMoreAsync,
 		fetchAll: compConfig.value.enableGroupedSearch
 			? fetchAllGroup
 			: fetchAll,
+		fetchAllAsync: compConfig.value.enableGroupedSearch
+			? fetchAllGroupAsync
+			: fetchAllAsync,
 		submit,
 		setUrlQuery,
 		resetPagination,
