@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.4.0...v2.5.0) (2025-04-11)
+
+
+### Features
+
+* added async fetch functions ([5767d3a](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/5767d3a45d8d7b7a69afef64500e04de84538847))
+
 ## [2.4.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.3.0...v2.4.0) (2025-02-20)
 
 
