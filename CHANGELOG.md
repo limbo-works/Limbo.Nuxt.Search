@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.1](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.6.0...v2.6.1) (2025-08-21)
+
+
+### Bug Fixes
+
+* updated readme ([019c09a](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/019c09aad0189cc511a1200c98e411ecb49e162f))
+
 ## [2.6.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.5.0...v2.6.0) (2025-08-21)
 
 
