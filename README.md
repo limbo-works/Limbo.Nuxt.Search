@@ -65,26 +65,28 @@ const limboSearch = await useLimboSearch({
 
 useLimboSearch gives access to
 
-| props | description |
-| ----- | ----------- |
-| searchData | contains results, pagination etc.
-| state | A state object giving information about the current state of the LimboSearch component through the properties `hasFetchedOnce`, `hasMoreItems`, `isAppend`, `isLoading`, `isInitiated` and `isUpdated`. All of these are boolean values, except if doing a grouped search, then `hasMoreItems` is an object with keys for each group id (which will then have a boolean value).<br><ul><li>`hasFetchedOnce`: Whether the LimboSearch component has executed at least one search.</li><li>`hasMoreItems`: Whether there is more items to be fetched.</li><li>`isAppend`: Whether the current search is an appending search ("Fetch more/all").</li><li>`isLoading`: Whether the current search is currently fetching.</li><li>`isInitiated`: Whether the search component has been initiated. This property will be false until either the `created`-event has run, or (if immediate search is turned on) until right before the first request is made.&nbsp;This property may be used to only insert the search filters or other elements on the page after the search is ready, to make sure the set values are in sync.</li><li>`isUpdated`: Whether a new search response is different from the latest response.</li></ul> |
-| query |  Object containing the `parameters`-property, which in turn contains the current search parameters in object form. |
-| requestSearch | performs a search without resetting pagination
-| fetchMore | fetches more results
-| fetchMoreAsync | fetches more results asynchronously (returns a Promise)
-| fetchAll | fetches all available results
-| fetchAllAsync | fetches all available results asynchronously (returns a Promise)
-| submit | submits a search
-| submitWithLimit | submits a search with a specific limit value
-| setUrlQuery | update the url
-| resetPagination | resets pagination
-| resetState | resets state object to default
-| getSerializedParams | get serialized params
-| lastRequestedUrl | get previous search url
-| latestResponse | get previous search result
-| watchedParameters | the currently watched parameters that trigger live search when changed
-| compConfig | the computed configuration object being used
+### Properties available through useLimboSearch
+
+| Property | Description |
+| -------- | ----------- |
+| searchData | Contains results, pagination, facets, meta, misc and error data |
+| state | Object with properties: `hasFetchedOnce`, `hasMoreItems`, `isAppend`, `isLoading`, `isInitiated`, `isUpdated` |
+| query | Object containing the `parameters` property with current search parameters |
+| requestSearch | Method that performs a search without resetting pagination |
+| fetchMore | Method to fetch more results (with optional group ID and amount parameters) |
+| fetchMoreAsync | Same as fetchMore but returns a Promise |
+| fetchAll | Method to fetch all available results (with optional group ID parameter) |
+| fetchAllAsync | Same as fetchAll but returns a Promise |
+| submit | Method to submit a new search |
+| submitWithLimit | Method to submit a search with a specific limit value |
+| setUrlQuery | Method to update the URL query parameters |
+| resetPagination | Method to reset pagination to its initial state |
+| resetState | Method to reset state object to default values |
+| getSerializedParams | Method to get serialized parameters as a query string |
+| lastRequestedUrl | The URL of the last search request |
+| latestResponse | The raw response from the last successful request |
+| watchedParameters | Parameters being watched that trigger live search when changed |
+| compConfig | The computed configuration object being used |
 
 
 ### Props overview
