@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.5.0...v2.6.0) (2025-08-21)
+
+
+### Features
+
+* added submitWithLimit ([cd2878e](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/cd2878e5b117c0de85ca3b53a52f2efe735bf411))
+
 ## [2.5.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.4.0...v2.5.0) (2025-04-11)
 
 
