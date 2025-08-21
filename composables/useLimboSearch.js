@@ -310,6 +310,20 @@ export const useLimboSearch = async (options = {}) => {
 		requestSearch();
 	}
 
+	function submitWithLimit(limit) {
+		internalExtraParameters.value = {};
+		resetPagination();
+		if (typeof limit === 'number') {
+			requestSearch({
+				parameterOverwrites: {
+					limit: limit,
+				},
+			});
+		} else {
+			requestSearch();
+		}
+	}
+
 	function fetchMore(amount) {
 		// Set a default amount if none is provided
 		amount ??=
@@ -459,9 +473,10 @@ export const useLimboSearch = async (options = {}) => {
 	}
 
 	async function requestSearch(options) {
-		const { delay, append } = {
+		const { delay, append, parameterOverwrites } = {
 			delay: compConfig.value.searchDelay,
 			append: false,
+			parameterOverwrites: {},
 			...options,
 		};
 		let clearHash = false;
@@ -489,6 +504,7 @@ export const useLimboSearch = async (options = {}) => {
 							),
 					  }
 					: parameters.value),
+				...(parameterOverwrites || {}),
 			};
 			const serializedParams = getSerializedParams(params);
 			if (
@@ -891,6 +907,7 @@ export const useLimboSearch = async (options = {}) => {
 			? fetchAllGroupAsync
 			: fetchAllAsync,
 		submit,
+		submitWithLimit,
 		setUrlQuery,
 		resetPagination,
 		resetState,

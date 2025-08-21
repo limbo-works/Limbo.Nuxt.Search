@@ -108,6 +108,7 @@ const bindings = computed(() => {
 		latestResponse: limboSearch.latestResponse,
 		action: {
 			submit: limboSearch.submit,
+			submitWithLimit: limboSearch.submitWithLimit,
 			fetchMore: limboSearch.fetchMore,
 			fetchAll: limboSearch.fetchAll,
 			setUrlQuery: limboSearch.setUrlQuery,
