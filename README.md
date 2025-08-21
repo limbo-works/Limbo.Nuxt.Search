@@ -72,14 +72,19 @@ useLimboSearch gives access to
 | query |  Object containing the `parameters`-property, which in turn contains the current search parameters in object form. |
 | requestSearch | performs a search without resetting pagination
 | fetchMore | fetches more results
+| fetchMoreAsync | fetches more results asynchronously (returns a Promise)
 | fetchAll | fetches all available results
+| fetchAllAsync | fetches all available results asynchronously (returns a Promise)
 | submit | submits a search
+| submitWithLimit | submits a search with a specific limit value
 | setUrlQuery | update the url
 | resetPagination | resets pagination
 | resetState | resets state object to default
 | getSerializedParams | get serialized params
 | lastRequestedUrl | get previous search url
 | latestResponse | get previous search result
+| watchedParameters | the currently watched parameters that trigger live search when changed
+| compConfig | the computed configuration object being used
 
 
 ### Props overview
@@ -91,6 +96,7 @@ useLimboSearch gives access to
 | extraParameters | Extra parameters to add to the search, which does not already exist in the filters. This could be a site or context id. These will be set with a low priority, meaning they may be overwritten by search filters sharing or url parameters sharing the same name. | {} | Object |
 | parameterOverwrites | This is for when you want to overwrite a parameter value, whether it be an url set parameter, a search filter or some of the set extra parameters. | {} | Object |
 | config | The config object will be explained in the overview below. In short, it is an object to configure how the search behaves in various ways. | See below | Object |
+| searchKey | A unique key to identify this search instance. If not provided, the current route path will be used. This prevents different search instances from interfering with each other. | "" | String |
 
 ### Config overview
 
@@ -118,6 +124,9 @@ The configuration object (`config`-prop) allows you to finely tune the behaviour
 | dataMergerMethod | If using grouped searching\* or if the search result isn't simply an array/as expected\*\*, you can insert a method here to handle the merging of data when doing a "fetch more/all" action. | (newData, oldData) => {/\* appends newData to oldData \*/} | Function |
 | dataOutputTransformerMethod | Method to change the search data output without changing the internal data or values. | (data) => data | Function |
 | searchDelay | A delay in milliseconds between changing filters and the actual search being executed. Required if using live-search. | 0 | Number |
+| urlFilterMapping | Mapping for filters to url parameters (NOT FULLY IMPLEMENTED YET). | {} | Object |
+| onInit | Hook function that is called when the search is initiated. The reactive Limbo search object is passed as the first argument. | () => {} | Function |
+| onAfterSearch | Hook function that is called after each search request completes. The search data and state objects are passed as arguments. | undefined | Function |
 
 #### \* Grouped searches
 
@@ -190,15 +199,24 @@ The update event is the most important event here, mirroring the same data you w
 | state | A state object giving information about the current state of the LimboSearch component through the properties `hasFetchedOnce`, `hasMoreItems`, `isAppend`, `isLoading`, `isInitiated` and `isUpdated`. All of these are boolean values, except if doing a grouped search, then `hasMoreItems` is an object with keys for each group id (which will then have a boolean value).<br><ul><li>`hasFetchedOnce`: Whether the LimboSearch component has executed at least one search.</li><li>`hasMoreItems`: Whether there is more items to be fetched.</li><li>`isAppend`: Whether the current search is an appending search ("Fetch more/all").</li><li>`isLoading`: Whether the current search is currently fetching.</li><li>`isInitiated`: Whether the search component has been initiated. This property will be false until either the `created`-event has run, or (if immediate search is turned on) until right before the first request is made.&nbsp;This property may be used to only insert the search filters or other elements on the page after the search is ready, to make sure the set values are in sync.</li><li>`isUpdated`: Whether a new search response is different from the latest response.</li></ul> |
 | query | Object containing the `parameters`-property, which in turn contains the current search parameters in object form. |
 | data | The `.data` fetched from the endpoint (after potentially being transformed by the `searchResponseTransformerMethod` or merged with previous data through the `dataMergerMethod`). Typically an array. |
+| lastRequestedUrl | The URL of the last search request that was made. |
+| latestResponse | The raw response object from the last successful request. |
 | facets | The `.facets` fetched from the endpoint (if any, and after potential transformations). |
 | meta | The `.meta` fetched from the endpoint (if any, and after potential transformations). |
 | misc | The `.misc` fetched from the endpoint (if any, and after potential transformations). |
-| action | An object of available functions to execute.<br><br><ul><li>`submit()`: A method to submit a new search as-is.</li><li>`fetchMore([id],[amount])`: A method to fetch more results of the current search. If an amount isn't specified, the configured amount will be used. If doing grouped searches, the group id of the group to fetch more from should be supplied as the first argument.</li><li>`fetchAll([id])`: A method to fetch all the remaining results of the current search.&nbsp;If doing grouped searches, the group id of the group to fetch all from should be supplied.</li></ul> |
+| action | An object of available functions to execute.<br><br><ul><li>`submit()`: A method to submit a new search as-is.</li><li>`submitWithLimit(limit)`: A method to submit a new search with a specific limit value.</li><li>`fetchMore([id],[amount])`: A method to fetch more results of the current search. If an amount isn't specified, the configured amount will be used. If doing grouped searches, the group id of the group to fetch more from should be supplied as the first argument.</li><li>`fetchMoreAsync([id],[amount])`: Same as fetchMore but returns a Promise.</li><li>`fetchAll([id])`: A method to fetch all the remaining results of the current search.&nbsp;If doing grouped searches, the group id of the group to fetch all from should be supplied.</li><li>`fetchAllAsync([id])`: Same as fetchAll but returns a Promise.</li><li>`resetPagination()`: Resets the pagination to its initial state.</li><li>`resetState()`: Resets the component state to default values.</li><li>`setUrlQuery([query], [clearHash])`: Updates the URL query parameters.</li><li>`getSerializedParams([parameters])`: Returns serialized parameters as a query string.</li></ul> |
 | error | If the last request ended with an error, the error object will exist on this property. |
 
 ## Exposed slot props
 
-The exposed slot props on the default slot will be the same data as sent out by the `update`-event. Refer to the same table above.
+The exposed slot props on the default slot will be the same data as sent out by the `update`-event. The component exposes the following properties:
+
+- All properties listed in the Events overview table above
+- `watchedParameters`: The parameters currently being watched for live search triggers (available through `composableInstance.watchedParameters`)
+- `composableInstance`: The full useLimboSearch composable instance for advanced usage
+- `options`: The computed options object passed to the composable
+
+Note: `facets`, `meta`, `misc`, and `error` are available through the `searchData` object when using the composable directly, or as individual slot props when using the component.
 
 ## General notes
 
