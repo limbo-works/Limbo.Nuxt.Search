@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.3](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.7.2...v2.7.3) (2025-09-10)
+
+
+### Bug Fixes
+
+* filter out aborts ([baf7b60](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/baf7b60a717d50ae8bbdfc683eb31d174cbf906e))
+
 ## [2.7.2](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.7.1...v2.7.2) (2025-09-10)
 
 
