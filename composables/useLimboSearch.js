@@ -126,7 +126,7 @@ export const useLimboSearch = async (options = {}) => {
 	onBeforeUnmount(() => {
 		// Cancel any active requests to prevent race conditions
 		if (activeRequestController.value) {
-			activeRequestController.value.abort();
+			activeRequestController.value.abort('The component was unmounted.');
 		}
 		// Clear timeout if any
 		if (typeof window !== "undefined" && requestTimeout.value) {
@@ -589,7 +589,7 @@ export const useLimboSearch = async (options = {}) => {
 			try {
 				// Cancel any existing request to prevent race conditions
 				if (activeRequestController.value) {
-					activeRequestController.value.abort();
+					activeRequestController.value.abort('New search initiated.');
 				}
 
 				// Create new controller for this request
