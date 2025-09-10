@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.2](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.7.1...v2.7.2) (2025-09-10)
+
+
+### Bug Fixes
+
+* dont show error on aborted signals ([f790653](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/f790653135482d782ac06bc6845382e349bf689c))
+
 ## [2.7.1](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.7.0...v2.7.1) (2025-09-10)
 
 
