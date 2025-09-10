@@ -771,7 +771,7 @@ export const useLimboSearch = async (options = {}) => {
 		} catch (error) {
 			// Handle any unexpected errors during the search process
 			// Don't log AbortError as these are intentional cancellations
-			if (error.name !== 'AbortError') {
+			if (error.name !== 'AbortError' && !activeRequestController.value?.signal?.aborted) {
 				console.error('Unexpected error during search:', error);
 				state.value.isLoading = false;
 				searchData.value.error = {
