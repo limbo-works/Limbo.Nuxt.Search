@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.6.1...v2.7.0) (2025-09-10)
+
+
+### Features
+
+* updated search with fetch options, abort signal and various notes and optimizations ([25bda9c](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/25bda9c347a89fc249ddae8c7a18be8f306c8961))
+
 ## [2.6.1](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.6.0...v2.6.1) (2025-08-21)
 
 
