@@ -13,13 +13,11 @@ export const useLimboSearch = async (options = {}) => {
 	const deepClone = (obj) => {
 		if (obj === null || typeof obj !== 'object') return obj;
 		if (obj instanceof Date) return new Date(obj.getTime());
-		if (obj instanceof Array) return obj.map(item => deepClone(item));
+		if (obj instanceof Array) return obj.map((item) => deepClone(item));
 		if (typeof obj === 'object') {
 			const cloned = {};
 			for (const key in obj) {
-				if (obj.hasOwnProperty(key)) {
-					cloned[key] = deepClone(obj[key]);
-				}
+				cloned[key] = deepClone(obj[key]);
 			}
 			return cloned;
 		}
@@ -27,7 +25,7 @@ export const useLimboSearch = async (options = {}) => {
 	};
 
 	const {
-		searchKey = "",
+		searchKey = '',
 		// searchFilters,
 		// config = {},
 		// extraParameters = {},
@@ -83,7 +81,7 @@ export const useLimboSearch = async (options = {}) => {
 
 	const defaultLimit = 12;
 	const defaultConfig = {
-		callMethod: "GET", // { string } The method to use for the call
+		callMethod: 'GET', // { string } The method to use for the call
 		enableLiveSearch: false, // { boolean|array } Can be an array of particular parameters triggering a live search or simply true or false
 		immediateSearch: {
 			useUrlQuery: true,
@@ -92,14 +90,14 @@ export const useLimboSearch = async (options = {}) => {
 		clearRouterHashOnSearch: false, // { boolean|object } Whether to clear the hash on search. If an object is used, the property "includeInitialSearch" to also clear for the first search, else that will be left out
 		limit: { initial: defaultLimit, value: defaultLimit }, // { number|object } If a numeric limit is set, it will be used for both values - grouped paginations should be set with their ids (fx. limit: { 1: { initial: 18, value: 12 }, 2: { initial: 15, value: 6 } }).
 		enableGroupedSearch: false, // { boolean } Make use of grouped pagination (l1, o1, l2, o2, (ie. l{id}, o{id}) etc.) instead of simply "limit" and "offset".
-		groupParameter: "groups", // { string } When needing to "fetch more / all" we need a parameter to filter that.
+		groupParameter: 'groups', // { string } When needing to "fetch more / all" we need a parameter to filter that.
 		updateUrlQueryOnSearch: true, // { boolean } Allow the page's url to reflect the search
 		updateVueRouteOnSearch: false, // { boolean|object } Allow the vue router to reflect the search - may cause issues if the page is keyed based off the query. /* NOT FULLY DONE YET (DON'T CURRENTLY RE-SEARCH): If an object is used, set "pushHistory" to make each individual search part of the browser history. */
 		clearSearchDataOnError: true, // { boolean } When toggled to false, the data from the previous search will persist on error
 		allowSearchFiltersMutation: false, // { boolean } Needs to be explicitly turned on!
 		updateSearchFiltersOnBindingChange: true, // { boolean } Whether a change in the bound search filters should trigger a change in the internally used data
-		persistentParameters: ["contextId"], // { array } Parameters that should always be present in a search (empty or not)
-		hiddenParameters: ["siteId", "contextId", "pageId", "cultureId"], // { array } Parameters that should not be shown in the url.
+		persistentParameters: ['contextId'], // { array } Parameters that should always be present in a search (empty or not)
+		hiddenParameters: ['siteId', 'contextId', 'pageId', 'cultureId'], // { array } Parameters that should not be shown in the url.
 		defaultParameterValues: {}, // { object } Default values for parameters - parameters will not be shown in the url if they have the same value as the default value
 
 		searchDelay: 0, // { number } Delay in ms before the search is triggered
@@ -116,7 +114,6 @@ export const useLimboSearch = async (options = {}) => {
 		// Hooks
 		onInit: () => {}, // { function } Hook for when the search is initiated. The reactive Limbo search object is passed as the first argument.
 		onAfterSearch: () => {}, // { function } Hook for when the search is completed. The reactive Limbo search object is passed as the first argument and the state as the second argument.
-
 	};
 
 	const lastRequestedUrl = ref(null);
@@ -129,7 +126,7 @@ export const useLimboSearch = async (options = {}) => {
 			activeRequestController.value.abort('The component was unmounted.');
 		}
 		// Clear timeout if any
-		if (typeof window !== "undefined" && requestTimeout.value) {
+		if (typeof window !== 'undefined' && requestTimeout.value) {
 			window.clearTimeout(requestTimeout.value);
 		}
 		// Clear Nuxt state
@@ -144,7 +141,7 @@ export const useLimboSearch = async (options = {}) => {
 		misc: null,
 		error: null,
 	};
-	const reservedParameters = ["limit", "offset", "total"];
+	const reservedParameters = ['limit', 'offset', 'total'];
 
 	const searchData = useState(`searchData${searchKey}`, () =>
 		deepClone(defaultSearchData)
@@ -162,9 +159,7 @@ export const useLimboSearch = async (options = {}) => {
 		removeReservedParameters(searchFilters.value)
 	);
 	const searchFiltersClone = ref(
-		removeReservedParameters(
-			deepClone(searchFilters.value)
-		)
+		removeReservedParameters(deepClone(searchFilters.value))
 	);
 	const internalExtraParameters = ref({});
 	const internalPagination = ref({});
@@ -239,10 +234,10 @@ export const useLimboSearch = async (options = {}) => {
 		// Simple pagination mode - just limit and offset
 		const pagination = { limit: 0, offset: 0 };
 		const { limit, offset } = internalPagination.value ?? {};
-		if (typeof limit !== "undefined") {
+		if (typeof limit !== 'undefined') {
 			pagination.limit = limit;
 		}
-		if (typeof offset !== "undefined") {
+		if (typeof offset !== 'undefined') {
 			pagination.offset = offset;
 		}
 		return pagination;
@@ -291,7 +286,7 @@ export const useLimboSearch = async (options = {}) => {
 			compConfig.value.enableGroupedSearch &&
 			typeof internalExtraParameters.value[
 				compConfig.value.groupParameter
-			] !== "undefined"
+			] !== 'undefined'
 		) {
 			const parameters = {
 				...searchFilterParameters.value,
@@ -589,11 +584,14 @@ export const useLimboSearch = async (options = {}) => {
 			try {
 				// Cancel any existing request to prevent race conditions
 				if (activeRequestController.value) {
-					activeRequestController.value.abort('New search initiated.');
+					activeRequestController.value.abort(
+						'New search initiated.'
+					);
 				}
 
 				// Create new controller for this request
-				activeRequestController.value = new AbortController();
+				const currentRequestController = new AbortController();
+				activeRequestController.value = currentRequestController;
 
 				const fetchOptions = compConfig.value.fetchOptions || {};
 				const params = {
@@ -604,7 +602,7 @@ export const useLimboSearch = async (options = {}) => {
 								...convertToParameterStyledPagination(
 									internalPagination.value
 								),
-						  }
+							}
 						: parameters.value),
 					...(parameterOverwrites || {}),
 				};
@@ -618,7 +616,7 @@ export const useLimboSearch = async (options = {}) => {
 				requestTimeout.value = null;
 
 				lastRequestedUrl.value = `${endpointUrl.value}?${serializedParams}`;
-				if (compConfig.value.callMethod === "POST") {
+				if (compConfig.value.callMethod === 'POST') {
 					lastRequestedUrl.value = endpointUrl.value;
 				}
 				state.value.isAppend = !!append;
@@ -627,15 +625,20 @@ export const useLimboSearch = async (options = {}) => {
 				const data = await $fetch(lastRequestedUrl.value, {
 					method: compConfig.value.callMethod,
 					body:
-						compConfig.value.callMethod === "POST"
-							? compConfig.value.searchBodyTransformerMethod(params)
+						compConfig.value.callMethod === 'POST'
+							? compConfig.value.searchBodyTransformerMethod(
+									params
+								)
 							: null,
-					signal: activeRequestController.value.signal, // Add abort signal
+					signal: currentRequestController.signal, // Add abort signal
 					...fetchOptions,
 					onResponseError(event) {
 						const { response } = event;
 						// Only handle error if this request hasn't been cancelled
-						if (!requestTimeout.value && !activeRequestController.value?.signal?.aborted) {
+						if (
+							!requestTimeout.value &&
+							!currentRequestController?.signal?.aborted
+						) {
 							searchData.value = {
 								...defaultSearchData,
 								...searchData.value,
@@ -643,11 +646,15 @@ export const useLimboSearch = async (options = {}) => {
 							state.value.hasFetchedOnce = import.meta.client;
 							if (compConfig.value.clearSearchDataOnError) {
 								state.value.hasMoreItems = undefined;
-								Object.assign(searchData.value, defaultSearchData);
+								Object.assign(
+									searchData.value,
+									defaultSearchData
+								);
 								latestResponse.value = null;
 							} else {
 								if (compConfig.value.enableGroupedSearch) {
-									for (const key in state.value.hasMoreItems) {
+									for (const key in state.value
+										.hasMoreItems) {
 										state.value.hasMoreItems[key] = false;
 									}
 								} else {
@@ -655,34 +662,41 @@ export const useLimboSearch = async (options = {}) => {
 								}
 							}
 							// Enhanced error handling - ensure response data is safe to use
-							searchData.value.error = response?._data || response?.data || {
-								message: 'An unexpected error occurred',
-								status: response?.status || 500
-							};
+							searchData.value.error = response?._data ||
+								response?.data || {
+									message: 'An unexpected error occurred',
+									status: response?.status || 500,
+								};
 							state.value.isLoading = false;
 
 							if (fetchOptions.onResponseError) {
 								return fetchOptions.onResponseError(event);
 							}
-
-							console.error('Search request failed:', searchData.value.error);
 						} else if (fetchOptions.onResponseError) {
 							return fetchOptions.onResponseError(event);
 						}
 					},
+				}).catch((error) => {
+					// Throw as abort error
+					if (!currentRequestController?.signal?.aborted) {
+						throw error;
+					}
 				});
 
 				// Check if request was cancelled or URL changed (race condition protection)
-				if (activeRequestController.value?.signal?.aborted ||
-					lastRequestedUrl.value != currentlyRequestedUrl) {
+				if (
+					currentRequestController?.signal?.aborted ||
+					lastRequestedUrl.value != currentlyRequestedUrl
+				) {
 					return;
 				}
 
 				if (!requestTimeout.value) {
 					state.value.hasFetchedOnce = import.meta.client;
 					let response =
-						compConfig.value.searchResponseTransformerMethod?.(data) ??
-						data;
+						compConfig.value.searchResponseTransformerMethod?.(
+							data
+						) ?? data;
 					latestResponse.value = data; // save for later
 
 					// On append, merge the paginations
@@ -709,83 +723,90 @@ export const useLimboSearch = async (options = {}) => {
 					const newData = compConfig.value.enableGroupedSearch
 						? response
 						: response?.data;
-				searchData.value.data = append // Data is getting merged
-					? compConfig.value.dataMergerMethod?.(
-							newData,
-							deepClone(searchData.value.data)
-					  ) ?? newData
-					: newData;
-				searchData.value.facets = response?.facets;
-				searchData.value.meta = response?.meta;
-				searchData.value.misc = response?.misc;
-				query.value.parameters = {
-					...parameters.value,
-				};
-				if (compConfig.value.enableGroupedSearch) {
-					// Group pagination
-					state.value.hasMoreItems = {};
-					searchData.value.pagination = response?.pagination;
-					if (!searchData.value.pagination) {
-						searchData.value.pagination = {};
-					}
-					response?.groups?.forEach((group) => {
-						if ("id" in group) {
-							searchData.value.pagination[group.id] = {
-								limit: group.limit || 0,
-								offset: group.offset || 0,
-								total: group.total || 0,
-							};
+					searchData.value.data = append // Data is getting merged
+						? (compConfig.value.dataMergerMethod?.(
+								newData,
+								deepClone(searchData.value.data)
+							) ?? newData)
+						: newData;
+					searchData.value.facets = response?.facets;
+					searchData.value.meta = response?.meta;
+					searchData.value.misc = response?.misc;
+					query.value.parameters = {
+						...parameters.value,
+					};
+					if (compConfig.value.enableGroupedSearch) {
+						// Group pagination
+						state.value.hasMoreItems = {};
+						searchData.value.pagination = response?.pagination;
+						if (!searchData.value.pagination) {
+							searchData.value.pagination = {};
 						}
-					});
-					for (const key in searchData.value.pagination) {
-						const value = Object.assign(
+						response?.groups?.forEach((group) => {
+							if ('id' in group) {
+								searchData.value.pagination[group.id] = {
+									limit: group.limit || 0,
+									offset: group.offset || 0,
+									total: group.total || 0,
+								};
+							}
+						});
+						for (const key in searchData.value.pagination) {
+							const value = Object.assign(
+								{ limit: 0, offset: 0, total: 0 },
+								searchData.value.pagination[key]
+							);
+							searchData.value.pagination[key] = value;
+							internalPagination.value[key] = {
+								...value,
+							};
+							state.value.hasMoreItems[key] =
+								value.limit + value.offset < value.total;
+						}
+					} else {
+						// Ordinary pagination
+						searchData.value.pagination = Object.assign(
 							{ limit: 0, offset: 0, total: 0 },
-							searchData.value.pagination[key]
+							response?.pagination
 						);
-						searchData.value.pagination[key] = value;
-						internalPagination.value[key] = {
-							...value,
-						};
-						state.value.hasMoreItems[key] =
-							value.limit + value.offset < value.total;
+						internalPagination.value.limit =
+							searchData.value.pagination.limit;
+						internalPagination.value.offset =
+							searchData.value.pagination.offset;
+						state.value.hasMoreItems =
+							searchData.value.pagination.limit +
+								searchData.value.pagination.offset <
+							searchData.value.pagination.total;
 					}
-				} else {
-					// Ordinary pagination
-					searchData.value.pagination = Object.assign(
-						{ limit: 0, offset: 0, total: 0 },
-						response?.pagination
-					);
-					internalPagination.value.limit =
-						searchData.value.pagination.limit;
-					internalPagination.value.offset =
-						searchData.value.pagination.offset;
-					state.value.hasMoreItems =
-						searchData.value.pagination.limit +
-							searchData.value.pagination.offset <
-						searchData.value.pagination.total;
+					state.value.isLoading = false;
+					// Clean up the request controller
+					activeRequestController.value = null;
 				}
-				state.value.isLoading = false;
+			} catch (error) {
+				// Handle any unexpected errors during the search process
+				// Don't log AbortError as these are intentional cancellations
+				if (
+					error.name !== 'AbortError' &&
+					!activeRequestController.value?.signal?.aborted
+				) {
+					console.error(
+						'[Limbo Search] Unexpected error during search:',
+						error
+					);
+					state.value.isLoading = false;
+					searchData.value.error = {
+						message:
+							error?.message || 'An unexpected error occurred',
+						originalError: error,
+					};
+				}
 				// Clean up the request controller
 				activeRequestController.value = null;
 			}
-		} catch (error) {
-			// Handle any unexpected errors during the search process
-			// Don't log AbortError as these are intentional cancellations
-			if (error.name !== 'AbortError' && !activeRequestController.value?.signal?.aborted) {
-				console.error('Unexpected error during search:', error);
-				state.value.isLoading = false;
-				searchData.value.error = {
-					message: error?.message || 'An unexpected error occurred',
-					originalError: error
-				};
-			}
-			// Clean up the request controller
-			activeRequestController.value = null;
-		}
 		};
 		// Run on client or server with error handling
 		try {
-			if (typeof window !== "undefined" && delay > 0) {
+			if (typeof window !== 'undefined' && delay > 0) {
 				await new Promise((resolve) => {
 					window.clearTimeout(requestTimeout.value);
 					requestTimeout.value = window.setTimeout(resolve, delay);
@@ -798,11 +819,14 @@ export const useLimboSearch = async (options = {}) => {
 			);
 		} catch (error) {
 			// Final error handler for any unhandled errors
-			console.error('Critical error in requestSearch:', error);
+			console.error(
+				'[Limbo Search] Critical error in requestSearch:',
+				error
+			);
 			state.value.isLoading = false;
 			searchData.value.error = searchData.value.error || {
 				message: 'A critical error occurred during search',
-				originalError: error
+				originalError: error,
 			};
 		}
 	}
@@ -820,15 +844,14 @@ export const useLimboSearch = async (options = {}) => {
 				}
 			} else if (
 				value ||
-				/* eslint-disable-next-line */
 				(key in (compConfig.value.defaultParameterValues || {}) &&
 					value != compConfig.value.defaultParameterValues?.[key]) ||
 				isPersistent
 			) {
-				array.push(`${key}=${value ?? ""}`);
+				array.push(`${key}=${value ?? ''}`);
 			}
 		}
-		return array.join("&");
+		return array.join('&');
 	}
 
 	function resetPagination() {
@@ -879,9 +902,9 @@ export const useLimboSearch = async (options = {}) => {
 	// URL parameter synchronization logic
 	// This complex function manages the relationship between internal search state and browser URL
 	function setUrlQuery(query = getSerializedParams(), clearHash = false) {
-		const array = query.split("&").filter((item) => {
-			const key = item.split("=").shift();
-			let value = item.split("=").pop();
+		const array = query.split('&').filter((item) => {
+			const key = item.split('=').shift();
+			let value = item.split('=').pop();
 			// TODO: implement urlFilterMapping
 
 			// Hide group parameter when fetching specific groups to avoid URL pollution
@@ -922,15 +945,15 @@ export const useLimboSearch = async (options = {}) => {
 			// Exclude parameters that match defaults or are explicitly hidden
 			if (
 				key in defaultParameterValues &&
-				String(defaultParameterValues[key]) === (value ?? "")
+				String(defaultParameterValues[key]) === (value ?? '')
 			) {
 				return false;
 			}
 			return !compConfig.value.hiddenParameters?.includes?.(key);
 		});
 		const transformedArray = array.map((item) => {
-			const key = item.split("=").shift();
-			let value = item.split("=").pop();
+			const key = item.split('=').shift();
+			let value = item.split('=').pop();
 			if (key in compConfig.value.urlFilterMapping) {
 				const mappedKey = compConfig.value.urlFilterMapping[key];
 				if (value in mappedKey) {
@@ -941,26 +964,26 @@ export const useLimboSearch = async (options = {}) => {
 		});
 
 		const url =
-			[route.path, transformedArray.join("&")].filter(Boolean).join("?") +
+			[route.path, transformedArray.join('&')].filter(Boolean).join('?') +
 			(clearHash
-				? ""
-				: typeof window !== "undefined"
-				? window.location.hash
-				: route.hash);
+				? ''
+				: typeof window !== 'undefined'
+					? window.location.hash
+					: route.hash);
 
 		const oldUrl =
-			typeof window === "undefined"
+			typeof window === 'undefined'
 				? route.fullPath
 				: [
 						window.location.pathname,
 						window.location.search,
 						window.location.hash,
-				  ]
+					]
 						.filter(Boolean)
-						.join("");
-		typeof window !== "undefined" &&
+						.join('');
+		typeof window !== 'undefined' &&
 			compConfig.value.updateUrlQueryOnSearch &&
-			window.history.replaceState(window.history.state, "", url);
+			window.history.replaceState(window.history.state, '', url);
 
 		if (
 			compConfig.value.updateVueRouteOnSearch &&
@@ -972,11 +995,11 @@ export const useLimboSearch = async (options = {}) => {
 		}
 		// Edge case, but might as well handle it
 		if (
-			typeof window !== "undefined" &&
+			typeof window !== 'undefined' &&
 			compConfig.value.updateVueRouteOnSearch &&
 			compConfig.value.updateUrlQueryOnSearch
 		) {
-			window.history.replaceState(window.history.state, "", oldUrl);
+			window.history.replaceState(window.history.state, '', oldUrl);
 		}
 	}
 
@@ -991,14 +1014,14 @@ export const useLimboSearch = async (options = {}) => {
 	if (
 		compConfig.value.immediateSearch &&
 		(compConfig.value.immediateSearch?.ssr ||
-			typeof compConfig.value.immediateSearch === "boolean")
+			typeof compConfig.value.immediateSearch === 'boolean')
 	) {
 		resetPagination();
 
 		// Initialize search parameters from URL query if enabled
 		if (
 			compConfig.value.immediateSearch?.useUrlQuery ||
-			typeof compConfig.value.immediateSearch === "boolean"
+			typeof compConfig.value.immediateSearch === 'boolean'
 		) {
 			mixParametersFromUrl();
 
@@ -1020,7 +1043,8 @@ export const useLimboSearch = async (options = {}) => {
 			} else {
 				// Ordinary pagination adjustment
 				if (internalPagination.value.limit) {
-					internalPagination.value.limit = +internalPagination.value.limit;
+					internalPagination.value.limit =
+						+internalPagination.value.limit;
 				}
 				if (internalPagination.value.offset) {
 					// Add offset to limit to get all items from start to current page
@@ -1087,10 +1111,10 @@ export const useLimboSearch = async (options = {}) => {
 			const newPagination = {};
 			for (const key in pagination) {
 				const value = pagination[key];
-				if (typeof value?.limit !== "undefined") {
+				if (typeof value?.limit !== 'undefined') {
 					newPagination[`l${key}`] = value.limit;
 				}
-				if (typeof value?.offset !== "undefined") {
+				if (typeof value?.offset !== 'undefined') {
 					newPagination[`o${key}`] = value.offset;
 				}
 			}
@@ -1113,7 +1137,7 @@ export const useLimboSearch = async (options = {}) => {
 					});
 				}
 			} else {
-				field.value = value ?? "";
+				field.value = value ?? '';
 			}
 			return true;
 		}
@@ -1130,11 +1154,11 @@ export const useLimboSearch = async (options = {}) => {
 			// Handle pagination parameters for both grouped and simple modes
 			if (compConfig.value.enableGroupedSearch) {
 				// Parse grouped pagination parameters (l1, o1, l2, o2, etc.)
-				const array = key.toLowerCase().split("");
+				const array = key.toLowerCase().split('');
 				const firstLetter = array.shift();
-				const remainder = array.join("");
+				const remainder = array.join('');
 				if (
-					(firstLetter === "o" || firstLetter === "l") &&
+					(firstLetter === 'o' || firstLetter === 'l') &&
 					remainder === String(parseInt(remainder))
 				) {
 					const object = Object.assign(
@@ -1142,13 +1166,17 @@ export const useLimboSearch = async (options = {}) => {
 						internalPagination?.value?.[remainder]
 					);
 					// Safe numeric conversion with validation
-					if (firstLetter === "o") {
+					if (firstLetter === 'o') {
 						const numericValue = parseInt(value);
-						object.offset = isNaN(numericValue) ? 0 : Math.max(0, numericValue);
+						object.offset = isNaN(numericValue)
+							? 0
+							: Math.max(0, numericValue);
 					}
-					if (firstLetter === "l") {
+					if (firstLetter === 'l') {
 						const numericValue = parseInt(value);
-						object.limit = isNaN(numericValue) ? defaultLimit : Math.max(0, numericValue);
+						object.limit = isNaN(numericValue)
+							? defaultLimit
+							: Math.max(0, numericValue);
 					}
 					internalPagination.value = Object.assign(
 						internalPagination.value,
@@ -1160,9 +1188,11 @@ export const useLimboSearch = async (options = {}) => {
 				}
 			} else {
 				// Handle simple pagination parameters
-				if (key.toLowerCase() === "limit") {
+				if (key.toLowerCase() === 'limit') {
 					const numericValue = parseInt(value);
-					const safeLimit = isNaN(numericValue) ? defaultLimit : Math.max(0, numericValue);
+					const safeLimit = isNaN(numericValue)
+						? defaultLimit
+						: Math.max(0, numericValue);
 					if (!internalPagination.value) {
 						internalPagination.value = {
 							limit: safeLimit,
@@ -1172,9 +1202,11 @@ export const useLimboSearch = async (options = {}) => {
 					}
 					internalPagination.value.limit = safeLimit;
 					continue;
-				} else if (key.toLowerCase() === "offset") {
+				} else if (key.toLowerCase() === 'offset') {
 					const numericValue = parseInt(value);
-					const safeOffset = isNaN(numericValue) ? 0 : Math.max(0, numericValue);
+					const safeOffset = isNaN(numericValue)
+						? 0
+						: Math.max(0, numericValue);
 					if (!internalPagination.value) {
 						internalPagination.value = {
 							limit: 0,
