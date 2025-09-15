@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.8.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.7.3...v2.8.0) (2025-09-15)
+
+
+### Features
+
+* added onError hook ([2510e0e](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/2510e0e7798b0bca4fb440a189b001829e0efa38))
+
 ## [2.7.3](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.7.2...v2.7.3) (2025-09-10)
 
 
