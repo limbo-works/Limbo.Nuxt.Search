@@ -113,6 +113,9 @@ export const useLimboSearch = async (options = {}) => {
 
 		// Hooks
 		onInit: () => {}, // { function } Hook for when the search is initiated. The reactive Limbo search object is passed as the first argument.
+		onError: (error) => {
+			throw error;
+		}, // { function } Hook for when an error occurs in a fetch. The error object is passed as the first argument.
 		onAfterSearch: () => {}, // { function } Hook for when the search is completed. The reactive Limbo search object is passed as the first argument and the state as the second argument.
 	};
 
@@ -679,7 +682,11 @@ export const useLimboSearch = async (options = {}) => {
 				}).catch((error) => {
 					// Throw as abort error
 					if (!currentRequestController?.signal?.aborted) {
-						throw error;
+						if (compConfig.value.onAfterSearch) {
+							compConfig.value.onError(error);
+						} else {
+							throw error;
+						}
 					}
 				});
 
