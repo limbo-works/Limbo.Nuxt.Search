@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.8.1](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.8.0...v2.8.1) (2025-09-22)
+
+
+### Bug Fixes
+
+* upgrade nuxt config to ts ([8ec89a4](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/8ec89a4597f3590edaca0f072cead5e11f5663e0))
+
 ## [2.8.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.7.3...v2.8.0) (2025-09-15)
 
 
