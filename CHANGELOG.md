@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.9.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.8.1...v2.9.0) (2025-09-30)
+
+
+### Features
+
+* added pagination ([25631da](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/25631da7e924cc825399ecd1c8c54342f7332ff2))
+
 ## [2.8.1](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.8.0...v2.8.1) (2025-09-22)
 
 
