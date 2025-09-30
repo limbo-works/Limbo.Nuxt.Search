@@ -52,6 +52,9 @@ defineExpose({
 	get data() {
 		return limboSearch.searchData?.data;
 	},
+	get pagination() {
+		return limboSearch.searchData?.pagination;
+	},
 	get lastRequestedUrl() {
 		return limboSearch.lastRequestedUrl;
 	},
@@ -104,6 +107,7 @@ const bindings = computed(() => {
 		state: limboSearch.state,
 		query: limboSearch.query,
 		data: limboSearch.searchData?.data,
+		pagination: limboSearch.searchData?.pagination,
 		facets: limboSearch.searchData?.facets,
 		meta: limboSearch.searchData?.meta,
 		misc: limboSearch.searchData?.misc,
