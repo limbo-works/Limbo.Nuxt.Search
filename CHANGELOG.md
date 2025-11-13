@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.10.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.9.0...v2.10.0) (2025-11-13)
+
+
+### Features
+
+* exposed more functions ([266b7c6](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/266b7c64a66f019f9610bc9dad678310e802bc3f))
+
 ## [2.9.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.8.1...v2.9.0) (2025-09-30)
 
 
