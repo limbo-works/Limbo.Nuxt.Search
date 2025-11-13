@@ -67,6 +67,9 @@ defineExpose({
 
 	// Methods
 	submit,
+	submitWithLimit,
+	requestSearch,
+
 	get fetchMore() {
 		return limboSearch.fetchMore;
 	},
@@ -121,6 +124,7 @@ const bindings = computed(() => {
 			fetchMoreAsync: limboSearch.fetchMoreAsync,
 			fetchAll: limboSearch.fetchAll,
 			fetchAllAsync: limboSearch.fetchAllAsync,
+			requestSearch: limboSearch.requestSearch,
 			setUrlQuery: limboSearch.setUrlQuery,
 			resetPagination: limboSearch.resetPagination,
 			resetState: limboSearch.resetState,
@@ -155,5 +159,15 @@ watch(
 function submit() {
 	emits("update", true);
 	limboSearch?.submit();
+}
+
+function submitWithLimit(limit) {
+	emits("update", true);
+	limboSearch?.submitWithLimit(limit);
+}
+
+function requestSearch(options) {
+	emits("update", true);
+	limboSearch?.requestSearch(options);
 }
 </script>
