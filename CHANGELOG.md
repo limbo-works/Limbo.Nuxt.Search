@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.10.1](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.10.0...v2.10.1) (2025-11-13)
+
+
+### Bug Fixes
+
+* improved reacitivity stability ([fee0463](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/fee04638654c081dae1d5841382ce6eac529a751))
+
 ## [2.10.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.9.0...v2.10.0) (2025-11-13)
 
 
