@@ -721,49 +721,49 @@ export const useLimboSearch = async (options = {}) => {
 					} // Should probably merge facets and misc as well... A thing for the future?
 
 					// Set the everything
-					searchData.value = {
+					const newSearchData = {
 						...defaultSearchData,
 						...searchData.value,
 					};
 
-					searchData.value.error = null;
+					newSearchData.error = null;
 					const newData = compConfig.value.enableGroupedSearch
 						? response
 						: response?.data;
-					searchData.value.data = append // Data is getting merged
+					newSearchData.data = append // Data is getting merged
 						? (compConfig.value.dataMergerMethod?.(
 								newData,
-								deepClone(searchData.value.data)
+								deepClone(newSearchData.data)
 							) ?? newData)
 						: newData;
-					searchData.value.facets = response?.facets;
-					searchData.value.meta = response?.meta;
-					searchData.value.misc = response?.misc;
+					newSearchData.facets = response?.facets;
+					newSearchData.meta = response?.meta;
+					newSearchData.misc = response?.misc;
 					query.value.parameters = {
 						...parameters.value,
 					};
 					if (compConfig.value.enableGroupedSearch) {
 						// Group pagination
 						state.value.hasMoreItems = {};
-						searchData.value.pagination = response?.pagination;
-						if (!searchData.value.pagination) {
-							searchData.value.pagination = {};
+						newSearchData.pagination = response?.pagination;
+						if (!newSearchData.pagination) {
+							newSearchData.pagination = {};
 						}
 						response?.groups?.forEach((group) => {
 							if ('id' in group) {
-								searchData.value.pagination[group.id] = {
+								newSearchData.pagination[group.id] = {
 									limit: group.limit || 0,
 									offset: group.offset || 0,
 									total: group.total || 0,
 								};
 							}
 						});
-						for (const key in searchData.value.pagination) {
+						for (const key in newSearchData.pagination) {
 							const value = Object.assign(
 								{ limit: 0, offset: 0, total: 0 },
-								searchData.value.pagination[key]
+								newSearchData.pagination[key]
 							);
-							searchData.value.pagination[key] = value;
+							newSearchData.pagination[key] = value;
 							internalPagination.value[key] = {
 								...value,
 							};
@@ -772,20 +772,23 @@ export const useLimboSearch = async (options = {}) => {
 						}
 					} else {
 						// Ordinary pagination
-						searchData.value.pagination = Object.assign(
+						newSearchData.pagination = Object.assign(
 							{ limit: 0, offset: 0, total: 0 },
 							response?.pagination
 						);
 						internalPagination.value.limit =
-							searchData.value.pagination.limit;
+							newSearchData.pagination.limit;
 						internalPagination.value.offset =
-							searchData.value.pagination.offset;
+							newSearchData.pagination.offset;
 						state.value.hasMoreItems =
-							searchData.value.pagination.limit +
-								searchData.value.pagination.offset <
-							searchData.value.pagination.total;
+							newSearchData.pagination.limit +
+								newSearchData.pagination.offset <
+							newSearchData.pagination.total;
 					}
+
+					searchData.value = newSearchData;
 					state.value.isLoading = false;
+
 					// Clean up the request controller
 					activeRequestController.value = null;
 				}
