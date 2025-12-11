@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.11.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.10.1...v2.11.0) (2025-12-11)
+
+
+### Features
+
+* enhance field value handling with 'checked' property ([f2b2581](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/f2b25817252a323e94798e778f109eb955433518))
+
 ## [2.10.1](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.10.0...v2.10.1) (2025-11-13)
 
 
