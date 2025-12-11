@@ -212,7 +212,11 @@ export const useLimboSearch = async (options = {}) => {
 		const fieldParameters =
 			fields.value?.reduce((reducer, field) => {
 				if (field?.name) {
-					if (Array.isArray(field.value)) {
+					if ('checked' in field) {
+						if (field.checked) {
+							reducer[field.name] = field.value;
+						}
+					} else if (Array.isArray(field.value)) {
 						const item = field.value.find((item) => item?.checked);
 						if (item && item.value !== undefined) {
 							reducer[field.name] = item.value;
@@ -1140,7 +1144,16 @@ export const useLimboSearch = async (options = {}) => {
 		});
 
 		if (field) {
-			if (Array.isArray(field.value)) {
+			if ('checked' in field) {
+				console.log(field);
+				if (typeof value === 'boolean') {
+					field.checked = value;
+				} else if (field.value === value) {
+					field.checked = true;
+				} else {
+					field.checked = false;
+				}
+			} else if (Array.isArray(field.value)) {
 				if (field.value.find((item) => item.value === value)) {
 					field.value.forEach((item) => {
 						item.checked = item.value === value;
