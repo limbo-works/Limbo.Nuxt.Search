@@ -315,7 +315,7 @@ export const useLimboSearch = async (options = {}) => {
 		return false;
 	});
 
-	watch(
+	const cleanupSearchFiltersWatcher = watch(
 		searchFilters,
 		(newFilters) => {
 			if (compConfig.value.updateSearchFiltersOnBindingChange) {
@@ -329,7 +329,7 @@ export const useLimboSearch = async (options = {}) => {
 		{ deep: true }
 	);
 
-	watch(
+	const cleanupWatchedParametersWatcher = watch(
 		watchedParameters,
 		(newParams, oldParams) => {
 			const { enableLiveSearch } = compConfig.value;
@@ -1103,6 +1103,11 @@ export const useLimboSearch = async (options = {}) => {
 		resetPagination,
 		resetState,
 		getSerializedParams,
+	});
+
+	onScopeDispose(() => {
+		cleanupSearchFiltersWatcher();
+		cleanupWatchedParametersWatcher();
 	});
 
 	compConfig.value.onInit?.(limboSearch);
