@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.11.1](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.11.0...v2.11.1) (2026-01-15)
+
+
+### Bug Fixes
+
+* cleanup useLimboSearch watchers ([9ee6f3f](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/9ee6f3f2b648584f6a66121ce49872e8618b202d))
+
 ## [2.11.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.10.1...v2.11.0) (2025-12-11)
 
 
