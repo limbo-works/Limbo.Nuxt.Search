@@ -123,19 +123,6 @@ export const useLimboSearch = async (options = {}) => {
 	const activeRequestController = ref(null); // AbortController for request cancellation
 	const requestTimeout = ref(null);
 
-	onBeforeUnmount(() => {
-		// Cancel any active requests to prevent race conditions
-		if (activeRequestController.value) {
-			activeRequestController.value.abort('The component was unmounted.');
-		}
-		// Clear timeout if any
-		if (typeof window !== 'undefined' && requestTimeout.value) {
-			window.clearTimeout(requestTimeout.value);
-		}
-		// Clear Nuxt state
-		clearNuxtState([`searchData${searchKey}`, `searchState${searchKey}`]);
-	});
-
 	const defaultSearchData = {
 		data: null,
 		facets: null,
@@ -1023,6 +1010,23 @@ export const useLimboSearch = async (options = {}) => {
 		state.value.isInitiated = true;
 	}
 
+	// Cleanup
+	onScopeDispose(() => {
+		// Cancel any active requests to prevent race conditions
+		if (activeRequestController.value) {
+			activeRequestController.value.abort('The component was unmounted.');
+		}
+		// Clear timeout if any
+		if (typeof window !== 'undefined' && requestTimeout.value) {
+			window.clearTimeout(requestTimeout.value);
+		}
+		// Clear Nuxt state
+		clearNuxtState([`searchData${searchKey}`, `searchState${searchKey}`]);
+		// CLeanup watchers
+		cleanupSearchFiltersWatcher();
+		cleanupWatchedParametersWatcher();
+	});
+
 	// SSR and client-side initialization logic
 	// This section handles the complex initialization flow for both server and client
 	if (
@@ -1103,11 +1107,6 @@ export const useLimboSearch = async (options = {}) => {
 		resetPagination,
 		resetState,
 		getSerializedParams,
-	});
-
-	onScopeDispose(() => {
-		cleanupSearchFiltersWatcher();
-		cleanupWatchedParametersWatcher();
 	});
 
 	compConfig.value.onInit?.(limboSearch);
