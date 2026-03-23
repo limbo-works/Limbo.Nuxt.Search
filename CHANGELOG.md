@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.11.2](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.11.1...v2.11.2) (2026-03-23)
+
+
+### Bug Fixes
+
+* merged onScopeDispose and onBeforeUnmount and moved before async event ([d85a692](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/d85a6923a723998613a4d9abc97ffa2d1b1c513b))
+
 ## [2.11.1](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.11.0...v2.11.1) (2026-01-15)
 
 
