@@ -1,5 +1,61 @@
 # Changelog
 
+## [3.0.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/search-v2.11.2...search-v3.0.0) (2026-03-31)
+
+
+### ⚠ BREAKING CHANGES
+
+* updated to Nuxt4
+* Add useLimboSearch ([#10](https://github.com/limbo-works/Limbo.Nuxt.Search/issues/10))
+* update to release pleaase and go to v1
+
+### Features
+
+* add `resetState` function & `isUpdated` state value ([a860020](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/a8600204a909604df62201f1ffb326b1b5b7bfaa))
+* Add useLimboSearch ([#10](https://github.com/limbo-works/Limbo.Nuxt.Search/issues/10)) ([ac46a1e](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/ac46a1ec6bacb2b501a98a17b028a18fa415483d))
+* added async fetch functions ([5767d3a](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/5767d3a45d8d7b7a69afef64500e04de84538847))
+* added more exposed values including composableInstance ([6818caa](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/6818caaaa07f248064dbb526772962173c70014b))
+* added onError hook ([2510e0e](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/2510e0e7798b0bca4fb440a189b001829e0efa38))
+* added pagination ([25631da](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/25631da7e924cc825399ecd1c8c54342f7332ff2))
+* added remove-hash feature ([d674600](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/d6746009c482f406b19d093b0a38cf97613f35d3))
+* added submitWithLimit ([cd2878e](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/cd2878e5b117c0de85ca3b53a52f2efe735bf411))
+* added watched parameters to component ([339c41c](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/339c41c9467a0d8ef4ec62d15a1472e4437ce9dc))
+* allow LimboSearch to run wrapperless ([b6726ff](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/b6726ff25de150cb1d1919d388089f0f7dc2d176))
+* clear Nuxt state on unmount ([84e309b](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/84e309b6f2937cbf8d960549c226ffb6109dff41))
+* enhance field value handling with 'checked' property ([f2b2581](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/f2b25817252a323e94798e778f109eb955433518))
+* exposed `resetState` function on LimboSearch component ([c622566](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/c622566d9493e3dc88598734271bace5b799a910))
+* exposed more functions ([266b7c6](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/266b7c64a66f019f9610bc9dad678310e802bc3f))
+* inital setup ([bceb1e1](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/bceb1e15f75728830c5225c930c5b26c7c60200e))
+* update to latest search ([673fa8e](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/673fa8eb0ae90aa4616495b73b09856eedd636ba))
+* update to release pleaase and go to v1 ([b625cd8](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/b625cd8cc556a54bcca2a6073df359e1c5af8607))
+* updated search with fetch options, abort signal and various notes and optimizations ([25bda9c](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/25bda9c347a89fc249ddae8c7a18be8f306c8961))
+* updated to Nuxt4 ([4b9eb9b](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/4b9eb9b3004b7d4577792b72b6775eedbfa77699))
+* Upgrade reactivity ([#16](https://github.com/limbo-works/Limbo.Nuxt.Search/issues/16)) ([f380da3](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/f380da370e1861ddf740557d8ce0a6724163840e))
+
+
+### Bug Fixes
+
+* add empty test script ([cd4aac1](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/cd4aac145b6fb65d6c76315488b2aefb9a5bad0a))
+* added abort reasons ([ca00d67](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/ca00d674c12e7f318287636279a4d20cc4517d0d))
+* bump version ([a6fb8e4](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/a6fb8e4c134779b7eafd990ee7355d7c3e289c8b))
+* change package name ([6c557bd](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/6c557bd8718ff5d4303e1270d9056d1534c88550))
+* clean up logs and changes ([6a67c62](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/6a67c62062d4ab7d185f3e5a169999287c6eeadf))
+* cleanup useLimboSearch watchers ([9ee6f3f](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/9ee6f3f2b648584f6a66121ce49872e8618b202d))
+* combination v2 ([2d995d9](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/2d995d939a6ddfa5ec387835361205d6e510a239))
+* combine workflows ([297094d](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/297094dcd4558022a3a8609d9d1d0b1daf9168bb))
+* dont show error on aborted signals ([f790653](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/f790653135482d782ac06bc6845382e349bf689c))
+* filter out aborts ([baf7b60](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/baf7b60a717d50ae8bbdfc683eb31d174cbf906e))
+* improved reacitivity stability ([fee0463](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/fee04638654c081dae1d5841382ce6eac529a751))
+* merged onScopeDispose and onBeforeUnmount and moved before async event ([d85a692](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/d85a6923a723998613a4d9abc97ffa2d1b1c513b))
+* pagination changes ([#1](https://github.com/limbo-works/Limbo.Nuxt.Search/issues/1)) ([232c140](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/232c140ba2e7f6c7b8cc01a93feaae7435669ce2))
+* re-added release-package.yml to actually publish the package ([dc2f49c](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/dc2f49cd33390f4bb1f151225dc39dda0e802730))
+* remove duplicate ([fd7889d](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/fd7889d1a43f6493e3d0a65d6bffbd31f340e313))
+* supress composable outside Nuxt instance error ([b76a145](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/b76a145ada32d30d0d2a1f0d86ed53fdfdcd0db2))
+* update README ([de65093](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/de650936a32993d0fada628bbf5ef0810255ad5e))
+* updated readme ([019c09a](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/019c09aad0189cc511a1200c98e411ecb49e162f))
+* upgrade nuxt config to ts ([69550f0](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/69550f0b3eec3e4c000520ae75c924a65463054c))
+* upgrade nuxt config to ts ([8ec89a4](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/8ec89a4597f3590edaca0f072cead5e11f5663e0))
+
 ## [2.11.2](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/v2.11.1...v2.11.2) (2026-03-23)
 
 
