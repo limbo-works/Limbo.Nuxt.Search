@@ -1020,8 +1020,20 @@ export const useLimboSearch = async (options = {}) => {
 		if (typeof window !== 'undefined' && requestTimeout.value) {
 			window.clearTimeout(requestTimeout.value);
 		}
-		// Clear Nuxt state
-		clearNuxtState([`searchData${searchKey}`, `searchState${searchKey}`]);
+		// Clear Nuxt state if Nuxt context is still available.
+		// During SSR teardown this disposer can run after context cleanup.
+		try {
+			clearNuxtState([`searchData${searchKey}`, `searchState${searchKey}`]);
+		} catch (error) {
+			const message = error?.message || '';
+			if (
+				!message.includes(
+					'A composable that requires access to the Nuxt instance was called outside'
+				)
+			) {
+				throw error;
+			}
+		}
 		// CLeanup watchers
 		cleanupSearchFiltersWatcher();
 		cleanupWatchedParametersWatcher();
