@@ -9,7 +9,7 @@
 		"generate": "nuxi generate .playground",
 		"preview": "nuxi preview .playground",
 		"lint": "eslint .",
-		"test": "exit 0"
+		"test": "node --test"
 	},
 	"devDependencies": {
 		"eslint": "^10.1.0",

@@ -798,13 +798,17 @@ export const useLimboSearch = async (options = {}) => {
 					searchData.value.error = {
 						message:
 							error?.message || 'An unexpected error occurred',
-						originalError: error,
+						originalError: serializeSearchError(
+							error,
+							'An unexpected error occurred'
+						),
 					};
 				}
 				// Clean up the request controller
 				activeRequestController.value = null;
 			}
 		};
+
 		// Run on client or server with error handling
 		try {
 			if (typeof window !== 'undefined' && delay > 0) {
@@ -827,7 +831,10 @@ export const useLimboSearch = async (options = {}) => {
 			state.value.isLoading = false;
 			searchData.value.error = searchData.value.error || {
 				message: 'A critical error occurred during search',
-				originalError: error,
+				originalError: serializeSearchError(
+					error,
+					'A critical error occurred during search'
+				),
 			};
 		}
 	}
@@ -1086,7 +1093,19 @@ export const useLimboSearch = async (options = {}) => {
 			}
 		}
 
-		await requestSearch({ delay: 0 });
+		const nuxtApp = useNuxtApp();
+
+		if (
+			shouldSkipHydrationSearch(
+				import.meta.client,
+				nuxtApp.isHydrating,
+				searchData.value.data
+			)
+		) {
+			state.value.hasFetchedOnce = true;
+		} else {
+			await requestSearch({ delay: 0 });
+		}
 	}
 
 	const limboSearch = reactive({
@@ -1266,3 +1285,23 @@ export const useLimboSearch = async (options = {}) => {
 		}
 	}
 };
+
+export function shouldSkipHydrationSearch(
+	isClient,
+	isHydrating,
+	searchData
+) {
+	return (
+		isClient &&
+		isHydrating &&
+		searchData !== null &&
+		typeof searchData !== 'undefined'
+	);
+}
+
+export function serializeSearchError(error, fallbackMessage) {
+	return {
+		name: error?.name || 'Error',
+		message: error?.message || fallbackMessage,
+	};
+}

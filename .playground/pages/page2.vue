@@ -37,7 +37,7 @@
 const route = useRoute();
 
 const filters = ref({
-	endpointUrl: "https://www.jammerbugt.dk/api/jobs/search/",
+	endpointUrl: "/api/jobs/search",
 	fields: [
 		{ name: "contextId", value: "1588" },
 		{ name: "text", value: "" },
