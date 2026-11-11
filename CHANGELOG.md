@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.1](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/search-v3.0.0...search-v3.0.1) (2026-11-11)
+
+
+### Bug Fixes
+
+* avoid refetch on on client after ssr ([7c34773](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/7c347733607e482bab966bdb31d6ac149a8226d4))
+
 ## [3.0.0](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/search-v2.11.2...search-v3.0.0) (2026-03-31)
 
 
