@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.2](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/search-v3.0.1...search-v3.0.2) (2026-11-16)
+
+
+### Bug Fixes
+
+* preserve search parameters when loading more after SSR hydration ([8c75aea](https://github.com/limbo-works/Limbo.Nuxt.Search/commit/8c75aea7d5d7c6e53f74254affa177bd4c063ba5))
+
 ## [3.0.1](https://github.com/limbo-works/Limbo.Nuxt.Search/compare/search-v3.0.0...search-v3.0.1) (2026-11-11)
 
 
