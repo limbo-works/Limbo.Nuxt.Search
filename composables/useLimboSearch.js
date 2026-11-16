@@ -731,7 +731,7 @@ export const useLimboSearch = async (options = {}) => {
 					newSearchData.meta = response?.meta;
 					newSearchData.misc = response?.misc;
 					query.value.parameters = {
-						...parameters.value,
+						...params,
 					};
 					if (compConfig.value.enableGroupedSearch) {
 						// Group pagination
@@ -1102,6 +1102,17 @@ export const useLimboSearch = async (options = {}) => {
 				searchData.value.data
 			)
 		) {
+			query.value.parameters = { ...parameters.value };
+			if (compConfig.value.enableGroupedSearch) {
+				internalPagination.value = deepClone(
+					searchData.value.pagination
+				);
+			} else {
+				internalPagination.value = {
+					limit: searchData.value.pagination.limit,
+					offset: searchData.value.pagination.offset,
+				};
+			}
 			state.value.hasFetchedOnce = true;
 		} else {
 			await requestSearch({ delay: 0 });

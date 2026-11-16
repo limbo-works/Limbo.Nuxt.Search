@@ -63,6 +63,8 @@ const limboSearch = await useLimboSearch({
 });
 ```
 
+With SSR immediate search enabled, hydration reuses server results without another initial request. `fetchMore` and `fetchAll` retain the displayed search's filter and extra parameters and continue from its response pagination.
+
 useLimboSearch gives access to
 
 ### Properties available through useLimboSearch
